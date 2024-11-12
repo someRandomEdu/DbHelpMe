@@ -1,0 +1,15 @@
+#vaadin.launch-browser=true
+#spring.application.name=DbHelpMe
+
+spring:
+    application:
+        name: DbHelpMe
+
+    datasource:
+        username: root
+        password: _mySql.io0
+        url: jdbc:mysql://localhost:3306/mydatabase
+
+    jpa:
+        hibernate:
+            ddl-auto: create
