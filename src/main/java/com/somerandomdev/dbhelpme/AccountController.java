@@ -1,5 +1,6 @@
 package com.somerandomdev.dbhelpme;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,5 +27,18 @@ public final class AccountController {
     @PostMapping("/save")
     public Account save(@RequestBody Account account) {
         return accountService.save(account);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> delete(@RequestBody Account account) {
+        accountService.delete(account);
+        return ResponseEntity.ok("Account deleted!");
+    }
+
+    // FIMME: Serialize String into Json???
+    @DeleteMapping("/delete-by-username")
+    public ResponseEntity<String> deleteByUsername(@RequestBody String username) {
+        return accountService.deleteByUsername(username) ? ResponseEntity.ok("Account deleted!") :
+            ResponseEntity.ok("Account not found!");
     }
 }

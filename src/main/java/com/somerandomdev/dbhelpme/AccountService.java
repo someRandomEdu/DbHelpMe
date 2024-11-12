@@ -1,5 +1,11 @@
 package com.somerandomdev.dbhelpme;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import org.springframework.data.domain.Example;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,9 +23,12 @@ public final class AccountService {
         return accountRepository.save(account);
     }
 
-
     public List<Account> findAll() {
         return accountRepository.findAll();
+    }
+
+    public Optional<Account> findById(long id) {
+        return accountRepository.findById(id);
     }
 
     public Optional<Account> findById(Long id) {
@@ -28,5 +37,24 @@ public final class AccountService {
 
     public void delete(Account account) {
         accountRepository.delete(account);
+    }
+
+    public void deleteById(long id) {
+        accountRepository.deleteById(id);
+    }
+
+    public void deleteById(Long id) {
+        accountRepository.deleteById(id);
+    }
+
+    public boolean deleteByUsername(String username) {
+        for (Account account : findAll()) {
+            if (account.getUsername().equals(username)) {
+                accountRepository.delete(account);
+                return true;
+            }
+        }
+
+        return false;
     }
 }
