@@ -1,7 +1,7 @@
 package com.somerandomdev.dbhelpme;
 
 // TODO
-public class Book {
+public final class Book {
     private Long id;
     private String title;
     private String author;
