@@ -22,7 +22,6 @@ public final class Account {
         this.password = password;
     }
 
-
     public Long getId() {
         return id;
     }
