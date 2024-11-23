@@ -4,14 +4,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/accounts")
 public final class AccountController {
     AccountService accountService;
+    RentDataService rentDataService;
+    BookService bookService;
 
-    public AccountController(AccountService accountService) {
+    public AccountController(AccountService accountService, RentDataService rentDataService, BookService bookService) {
         this.accountService = accountService;
+        this.rentDataService = rentDataService;
+        this.bookService = bookService;
     }
 
     @GetMapping("/hello")
@@ -35,10 +40,34 @@ public final class AccountController {
         return ResponseEntity.ok("Account deleted!");
     }
 
-    // FIMME: Serialize String into Json???
+    // FIXME: Serialize String into Json???
     @DeleteMapping("/delete-by-username")
     public ResponseEntity<String> deleteByUsername(@RequestBody String username) {
-        return accountService.deleteByUsername(username) ? ResponseEntity.ok("Account deleted!") :
-            ResponseEntity.ok("Account not found!");
+        accountService.deleteByUsername(username);
+        return ResponseEntity.ok("Account deleted!");
+    }
+
+    @PostMapping("/log-in")
+    public Optional<Account> tryLoggingIn(String username, String password) {
+        for (Account account : accountService.findAll()) {
+            if (account.getUsername().equals(username)) {
+                return account.getPassword().equals(password) ? Optional.of(account) : Optional.empty();
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    @PostMapping("/rent")
+    public void rentBook(Account account, Book book) {
+        var rentData = rentDataService.findAllBy((value) ->
+            value.getAccountId().equals(account.getId()) && value.getBookId().equals(book.getId()));
+
+        var books = bookService.findAllBy(value -> value.equals(book));
+    }
+
+    @PostMapping
+    public void rentBook(Account account, String bookName, String bookAuthor) {
+
     }
 }

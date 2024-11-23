@@ -2,6 +2,9 @@ package com.somerandomdev.dbhelpme;
 
 import jakarta.persistence.*;
 
+import java.text.MessageFormat;
+import java.util.Objects;
+
 // TODO
 @Entity
 @Table(name = "books")
@@ -65,5 +68,21 @@ public final class Book {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Book other && Objects.equals(id, other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format("Book[id = {0}, title = {1}, author = {2}, publisher = {3}, description = {4}]",
+            id, title, author, publisher, description);
     }
 }

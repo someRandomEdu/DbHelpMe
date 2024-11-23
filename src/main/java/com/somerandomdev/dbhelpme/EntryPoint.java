@@ -8,7 +8,6 @@ import com.vaadin.flow.component.page.AppShellConfigurator;
 @SpringBootApplication
 @Theme("my-theme")
 public class EntryPoint implements AppShellConfigurator {
-
     public static void main(String[] args) {
         SpringApplication.run(EntryPoint.class, args);
     }
