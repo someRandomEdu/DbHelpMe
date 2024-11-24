@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import java.text.MessageFormat;
 import java.util.Objects;
 
-// TODO
 @Entity
 @Table(name = "books")
 public final class Book {

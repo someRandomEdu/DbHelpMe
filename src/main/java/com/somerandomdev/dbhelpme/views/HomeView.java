@@ -20,7 +20,7 @@ public class HomeView extends VerticalLayout {
         add(new Paragraph("This is the home view"));
 
         add(new Button("Go to login page here:", (event) -> {
-            UI.getCurrent().navigate("/api/log-in");
+            UI.getCurrent().navigate("/app/login");
         }));
     }
 }

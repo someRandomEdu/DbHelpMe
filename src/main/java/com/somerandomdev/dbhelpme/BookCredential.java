@@ -32,9 +32,8 @@ public class BookCredential {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof BookCredential that)) return false;
-
-        return Objects.equals(title, that.title) && Objects.equals(author, that.author);
+        return o instanceof BookCredential other &&
+            Objects.equals(title, other.title) && Objects.equals(author, other.author);
     }
 
     @Override
