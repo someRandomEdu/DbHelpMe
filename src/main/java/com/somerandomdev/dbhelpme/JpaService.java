@@ -2,9 +2,7 @@ package com.somerandomdev.dbhelpme;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 public abstract class JpaService<T, Id> {
@@ -81,6 +79,9 @@ public abstract class JpaService<T, Id> {
     }
 
     public Optional<T> findOneBy(Predicate<? super T> predicate) {
+        // var list = findAllBy(predicate);
+        // Collections.shuffle(list);
+        // return list.isEmpty() ? Optional.empty() : Optional.of(list.getFirst());
         return findFirstBy(predicate);
     }
 }

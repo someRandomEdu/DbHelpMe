@@ -97,9 +97,11 @@ public final class AppController {
     }
 
     @GetMapping("find-book")
-    public Optional<Book> findBook(@RequestBody Map<String, String> map) {
-        return bookService.findOneBy(value -> Objects.equals(value.getTitle(), map.get("title")) &&
+    public ResponseEntity<Book> findBook(@RequestBody Map<String, String> map) {
+        var bk = bookService.findOneBy(value -> Objects.equals(value.getTitle(), map.get("title")) &&
             Objects.equals(value.getAuthor(), map.get("author")));
+
+        return bk.isPresent() ? ResponseEntity.ok(bk.get()) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("find-rented-books")
@@ -198,10 +200,10 @@ public final class AppController {
                         rentDataService.save(rentData);
                         return new ResponseEntity<>("Book successfully returned!", HttpStatus.OK);
                     } else {
-                        return new ResponseEntity<>("Book is not returned!", HttpStatus.ALREADY_REPORTED);
+                        return new ResponseEntity<>("Book is not rented!", HttpStatus.ALREADY_REPORTED);
                     }
                 } else {
-                    return new ResponseEntity<>("Book is not returned!", HttpStatus.ALREADY_REPORTED);
+                    return new ResponseEntity<>("Book is not rented!", HttpStatus.ALREADY_REPORTED);
                 }
             } else {
                 return new ResponseEntity<>("Book not found!", HttpStatus.NOT_FOUND);

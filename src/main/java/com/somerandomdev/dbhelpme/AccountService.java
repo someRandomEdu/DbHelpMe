@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -14,14 +15,39 @@ public final class AccountService extends JpaService<Account, Long> {
         super(repository);
     }
 
-    public boolean deleteByUsername(String username) {
-        for (Account account : findAll()) {
-            if (account.getUsername().equals(username)) {
-                repository.delete(account);
-                return true;
+    public Optional<Account> findByUsername(String username) {
+        for (var account : findAll()) {
+            if (Objects.equals(account.getUsername(), username)) {
+                return Optional.of(account);
             }
         }
 
-        return false;
+        return Optional.empty();
+    }
+
+    public Result<Account, String> checkCredentials(String username, String password) {
+        for (var account : findAll()) {
+            if (Objects.equals(account.getUsername(), username)) {
+                return Objects.equals(account.getPassword(), password) ? Result.successReified(account) :
+                    Result.errorReified("Wrong password!");
+            }
+        }
+
+        return Result.errorReified("Account not found!");
+    }
+
+    public Result<Void, String> deleteByUsernameAndPassword(String username, String password) {
+        for (Account account : findAll()) {
+            if (Objects.equals(account.getUsername(), username)) {
+                if (Objects.equals(account.getPassword(), password)) {
+                    repository.delete(account);
+                    return Result.successReified(null);
+                } else {
+                    return Result.errorReified("Wrong password!");
+                }
+            }
+        }
+
+        return Result.errorReified("Account not found!");
     }
 }

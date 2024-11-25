@@ -40,13 +40,6 @@ public final class AccountController {
         return ResponseEntity.ok("Account deleted!");
     }
 
-    // FIXME: Serialize String into Json???
-    @DeleteMapping("/delete-by-username")
-    public ResponseEntity<String> deleteByUsername(@RequestBody String username) {
-        accountService.deleteByUsername(username);
-        return ResponseEntity.ok("Account deleted!");
-    }
-
     @PostMapping("/log-in")
     public Optional<Account> tryLoggingIn(String username, String password) {
         for (Account account : accountService.findAll()) {

@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-// NOTE: Could also be an interface...
+// TODO: Make it compatible with Json serialization?
 public abstract class Result<T, E> {
     public abstract boolean isSuccess();
     public abstract T getSuccessValue();

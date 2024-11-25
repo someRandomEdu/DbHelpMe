@@ -38,11 +38,14 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
         var topLabelLayout = new VerticalLayout(accountNameLabel);
         var rentButton = new Button("Rent");
         var returnButton = new Button("Return");
-        var commandLayout = new HorizontalLayout();
+        rentButton.addClickListener(event -> getRentDialog().open());
+        returnButton.addClickListener(event -> getReturnDialog().open());
+        var commandLayout = new HorizontalLayout(rentButton, returnButton);
         topLabelLayout.setSpacing(true);
         topLabelLayout.setAlignItems(Alignment.END);
         rentedBookGrid.setItems(appController.findRentedBooksOf(accountName).getBody());
         add(topLabelLayout);
+        add(commandLayout);
         add(rentedBookGrid);
     }
 
@@ -54,7 +57,7 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
         TextField authorField = new TextField("Author");
         layout.add(titleField);
         layout.add(authorField);
-        dialog.add(layout);
+        dialog.add(new VerticalLayout(titleField, authorField));
 
         dialog.getFooter().add(new Button("Cancel", event -> dialog.close()),
             new Button("Rent", event -> {
@@ -66,11 +69,11 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
                 var statusCode = operationResult.getStatusCode();
                 Notification notification = new Notification();
 
-                var notificationLayout = new VerticalLayout(
+                var notificationLayout = new HorizontalLayout(
                     new Button("x", evt -> notification.close()));
 
                 notificationLayout.setSpacing(true);
-                notificationLayout.setAlignItems(Alignment.END);
+                notificationLayout.setAlignItems(Alignment.CENTER);
                 notification.add(notificationLayout);
 
                 switch (statusCode) {
@@ -91,6 +94,9 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
                         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
                     }
                 }
+
+                notification.open();
+                dialog.close();
             }));
 
         return dialog;
@@ -108,7 +114,38 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
 
         dialog.getFooter().add(new Button("Cancel", event -> dialog.close()),
             new Button("Return", event -> {
+                var operationResult = appController.returnBook(Map.ofEntries(
+                    Map.entry("account", accountName),
+                    Map.entry("title", titleField.getValue()),
+                    Map.entry("author", authorField.getValue())
+                ));
 
+                var notification = new Notification();
+
+                var notificationLayout = new HorizontalLayout(
+                    new Button("x", evt -> notification.close())
+                );
+
+                notificationLayout.setSpacing(true);
+                notificationLayout.setAlignItems(Alignment.CENTER);
+                notification.setText(operationResult.getBody());
+                notification.add(notificationLayout);
+
+                switch (operationResult.getStatusCode()) {
+                    case HttpStatus.OK, HttpStatus.ALREADY_REPORTED -> {
+                        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    }
+                    case HttpStatus.NOT_FOUND -> {
+                        notification.addThemeVariants();
+                    }
+                    default -> {
+                        notification.setText("Unknown error!");
+                        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                    }
+                }
+
+                dialog.close();
+                notification.open();
             }));
 
         return dialog;
