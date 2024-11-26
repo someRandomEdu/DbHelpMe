@@ -6,6 +6,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -16,6 +17,7 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import org.springframework.http.HttpStatus;
 
+import java.lang.annotation.Native;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -67,33 +69,34 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
                     Map.entry("author", authorField.getValue())));
 
                 var statusCode = operationResult.getStatusCode();
-                Notification notification = new Notification();
-
-                var notificationLayout = new HorizontalLayout(
-                    new Button("x", evt -> notification.close()));
-
-                notificationLayout.setSpacing(true);
-                notificationLayout.setAlignItems(Alignment.CENTER);
-                notification.add(notificationLayout);
+                var notification = new Notification();
+                var resultLabel = new NativeLabel();
 
                 switch (statusCode) {
                     case HttpStatus.OK -> {
-                        notification.setText("Book rented successfully!");
+                        resultLabel.setText("Book rented successfully!");
                         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                     }
                     case HttpStatus.ALREADY_REPORTED -> {
-                        notification.setText("Book already rented!");
-                        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                        resultLabel.setText("Book already rented!");
+                        notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
                     }
                     case HttpStatus.NOT_FOUND -> {
-                        notification.setText("Book not found!");
+                        resultLabel.setText("Book not found!");
                         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
                     }
                     default -> {
-                        notification.setText("Unknown error!");
+                        resultLabel.setText("Unknown error!");
                         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
                     }
                 }
+
+                var notificationLayout = new HorizontalLayout(resultLabel,
+                    new Button(new Icon("lumo", "cross"),
+                        evt -> notification.close()));
+
+                notificationLayout.setAlignItems(Alignment.CENTER);
+                notification.add(notificationLayout);
 
                 notification.open();
                 dialog.close();
@@ -104,50 +107,6 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
 
     private Dialog getReturnDialog() {
         var dialog = new Dialog();
-        var layout = new HorizontalLayout();
-        layout.setSpacing(true);
-        TextField titleField = new TextField("Title");
-        TextField authorField = new TextField("Author");
-        layout.add(titleField);
-        layout.add(authorField);
-        dialog.add(layout);
-
-        dialog.getFooter().add(new Button("Cancel", event -> dialog.close()),
-            new Button("Return", event -> {
-                var operationResult = appController.returnBook(Map.ofEntries(
-                    Map.entry("account", accountName),
-                    Map.entry("title", titleField.getValue()),
-                    Map.entry("author", authorField.getValue())
-                ));
-
-                var notification = new Notification();
-
-                var notificationLayout = new HorizontalLayout(
-                    new Button("x", evt -> notification.close())
-                );
-
-                notificationLayout.setSpacing(true);
-                notificationLayout.setAlignItems(Alignment.CENTER);
-                notification.setText(operationResult.getBody());
-                notification.add(notificationLayout);
-
-                switch (operationResult.getStatusCode()) {
-                    case HttpStatus.OK, HttpStatus.ALREADY_REPORTED -> {
-                        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                    }
-                    case HttpStatus.NOT_FOUND -> {
-                        notification.addThemeVariants();
-                    }
-                    default -> {
-                        notification.setText("Unknown error!");
-                        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-                    }
-                }
-
-                dialog.close();
-                notification.open();
-            }));
-
         return dialog;
     }
 }
