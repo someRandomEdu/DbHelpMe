@@ -39,8 +39,9 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
         var topLayout = new VerticalLayout(new NativeLabel("Hi, " + accountName + "!"));
         topLayout.setDefaultHorizontalComponentAlignment(Alignment.END);
         rentedBookGrid.setItems(appController.findRentedBooks(account).getBody());
-        var rentLayout = new HorizontalLayout();
+        var commandLayout = new HorizontalLayout();
         var rentButton = new Button("Rent");
+        commandLayout.add(rentButton);
 
         rentButton.addClickListener(event -> {
             var popup = new Dialog("Rent book");
@@ -58,8 +59,11 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
                     ));
 
                     var notification = new Notification();
-                    notification.setText(operationResult.getBody());
-                    notification.setDuration(5);
+
+                    notification.add(new HorizontalLayout(new NativeLabel(operationResult.getBody()), new Button(
+                        new Icon("lumo", "cross"), evt -> {
+                            notification.close();
+                    })));
 
                     switch (operationResult.getStatusCode()) {
                         case HttpStatus.OK -> notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
@@ -68,11 +72,13 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
                     }
 
                     notification.open();
-                popup.close();
-            }));
+                    rentedBookGrid.setItems(appController.findRentedBooks(account).getBody());
+                    popup.close();
+                }));
 
+            popup.open();
         });
 
-        add(topLayout, rentedBookGrid);
+        add(topLayout, commandLayout, rentedBookGrid);
     }
 }
