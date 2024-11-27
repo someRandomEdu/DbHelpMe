@@ -28,19 +28,16 @@ public class LoginView extends Composite<VerticalLayout> {
             var username = textField.getValue();
             var password = passwordField.getValue();
             var loginResult = appController.login(new Account(null, username, password, null));
+            var code = loginResult.getStatusCode();
 
-            if (loginResult.hasBody()) {
+            if (Objects.equals(code, HttpStatus.OK)) {
                 UI.getCurrent().navigate("/app/account/" + username);
+            } if (Objects.equals(code, HttpStatus.UNAUTHORIZED)) {
+                errorLabel.setText("Invalid password!");
+            } else if (Objects.equals(code, HttpStatus.NOT_FOUND)) {
+                errorLabel.setText("User not found!");
             } else {
-                var code = loginResult.getStatusCode();
-
-                if (Objects.equals(code, HttpStatus.UNAUTHORIZED)) {
-                    errorLabel.setText("Invalid password!");
-                } else if (Objects.equals(code, HttpStatus.NOT_FOUND)) {
-                    errorLabel.setText("User not found!");
-                } else {
-                    errorLabel.setText("Unknown login error!");
-                }
+                errorLabel.setText("Unknown login error!");
             }
         });
 

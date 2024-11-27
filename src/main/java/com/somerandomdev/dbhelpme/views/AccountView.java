@@ -1,5 +1,6 @@
 package com.somerandomdev.dbhelpme.views;
 
+import com.somerandomdev.dbhelpme.Account;
 import com.somerandomdev.dbhelpme.AppController;
 import com.somerandomdev.dbhelpme.Book;
 import com.vaadin.flow.component.button.Button;
@@ -17,16 +18,13 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import org.springframework.http.HttpStatus;
 
-import java.lang.annotation.Native;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Route("/app/account")
 public class AccountView extends VerticalLayout implements HasUrlParameter<String> {
     private final AppController appController;
     private final Grid<Book> rentedBookGrid;
-    private String accountName;
 
     public AccountView(AppController appController) {
         this.appController = appController;
@@ -35,78 +33,46 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
 
     @Override
     public void setParameter(BeforeEvent beforeEvent, String accountName) {
-        this.accountName = accountName;
-        NativeLabel accountNameLabel = new NativeLabel("Hi, " + accountName + '!');
-        var topLabelLayout = new VerticalLayout(accountNameLabel);
+        Account account = appController.findAccountByUsername(accountName).orElseThrow(() ->
+            new IllegalArgumentException("Account not found!"));
+
+        var topLayout = new VerticalLayout(new NativeLabel("Hi, " + accountName + "!"));
+        topLayout.setDefaultHorizontalComponentAlignment(Alignment.END);
+        rentedBookGrid.setItems(appController.findRentedBooks(account).getBody());
+        var rentLayout = new HorizontalLayout();
         var rentButton = new Button("Rent");
-        var returnButton = new Button("Return");
-        rentButton.addClickListener(event -> getRentDialog().open());
-        returnButton.addClickListener(event -> getReturnDialog().open());
-        var commandLayout = new HorizontalLayout(rentButton, returnButton);
-        topLabelLayout.setSpacing(true);
-        topLabelLayout.setAlignItems(Alignment.END);
-        rentedBookGrid.setItems(appController.findRentedBooksOf(accountName).getBody());
-        add(topLabelLayout);
-        add(commandLayout);
-        add(rentedBookGrid);
-    }
 
-    private Dialog getRentDialog() {
-        var dialog = new Dialog();
-        var layout = new HorizontalLayout();
-        layout.setSpacing(true);
-        TextField titleField = new TextField("Title");
-        TextField authorField = new TextField("Author");
-        layout.add(titleField);
-        layout.add(authorField);
-        dialog.add(new VerticalLayout(titleField, authorField));
+        rentButton.addClickListener(event -> {
+            var popup = new Dialog("Rent book");
+            var titleField = new TextField("Title");
+            var authorField = new TextField("Author");
+            popup.add(titleField, authorField);
 
-        dialog.getFooter().add(new Button("Cancel", event -> dialog.close()),
-            new Button("Rent", event -> {
-                var operationResult = appController.rentBookWithUsername(Map.ofEntries(
-                    Map.entry("account", accountName),
-                    Map.entry("title", titleField.getValue()),
-                    Map.entry("author", authorField.getValue())));
+            popup.getFooter().add(new Button("Cancel", cancelEvent -> popup.close()),
+                new Button("Proceed", proceedEvent -> {
+                    var operationResult = appController.rentBook(Map.ofEntries(
+                        Map.entry("username", account.getUsername()),
+                        Map.entry("password", account.getPassword()),
+                        Map.entry("title", titleField.getValue()),
+                        Map.entry("author", authorField.getValue())
+                    ));
 
-                var statusCode = operationResult.getStatusCode();
-                var notification = new Notification();
-                var resultLabel = new NativeLabel();
+                    var notification = new Notification();
+                    notification.setText(operationResult.getBody());
+                    notification.setDuration(5);
 
-                switch (statusCode) {
-                    case HttpStatus.OK -> {
-                        resultLabel.setText("Book rented successfully!");
-                        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    switch (operationResult.getStatusCode()) {
+                        case HttpStatus.OK -> notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                        case HttpStatus.ALREADY_REPORTED -> notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+                        default -> notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
                     }
-                    case HttpStatus.ALREADY_REPORTED -> {
-                        resultLabel.setText("Book already rented!");
-                        notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
-                    }
-                    case HttpStatus.NOT_FOUND -> {
-                        resultLabel.setText("Book not found!");
-                        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-                    }
-                    default -> {
-                        resultLabel.setText("Unknown error!");
-                        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-                    }
-                }
 
-                var notificationLayout = new HorizontalLayout(resultLabel,
-                    new Button(new Icon("lumo", "cross"),
-                        evt -> notification.close()));
-
-                notificationLayout.setAlignItems(Alignment.CENTER);
-                notification.add(notificationLayout);
-
-                notification.open();
-                dialog.close();
+                    notification.open();
+                popup.close();
             }));
 
-        return dialog;
-    }
+        });
 
-    private Dialog getReturnDialog() {
-        var dialog = new Dialog();
-        return dialog;
+        add(topLayout, rentedBookGrid);
     }
 }

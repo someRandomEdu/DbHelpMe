@@ -1,7 +1,6 @@
 package com.somerandomdev.dbhelpme;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,7 +89,7 @@ public final class AppController {
 
         if (tmp.isPresent()) {
             return Objects.equals(tmp.get().getPassword(), account.getPassword()) ?
-                ResponseEntity.ok(tmp.get()) : new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                new ResponseEntity<>(tmp.get(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -249,45 +248,37 @@ public final class AppController {
     }
 
     @PutMapping("/rent-book-by-username")
-    public ResponseEntity<String> rentBookWithUsername(Map<String, String> map) {
-        var acc = accountService.findOneBy(value ->
-            Objects.equals(value.getUsername(), map.get("username")));
+    public ResponseEntity<String> rentBookByUsername(@RequestBody Map<String, String> map) {
+        String username = map.get("username");
+        System.out.println(username);
+
+        Optional<Account> acc = accountService.findOneBy(
+            value -> Objects.equals(value.getUsername(), username));
 
         if (acc.isPresent()) {
-            var accId = acc.get().getId();
+            Account account = acc.get();
 
-            var bk = bookService.findOneBy(value ->
+            Optional<Book> bk = bookService.findOneBy(value ->
                 Objects.equals(value.getTitle(), map.get("title")) &&
                 Objects.equals(value.getAuthor(), map.get("author")));
 
             if (bk.isPresent()) {
-                var bkId = bk.get().getId();
+                Book book = bk.get();
 
-                var rd = rentDataService.findOneBy(value ->
-                    Objects.equals(value.getAccountId(), accId) &&
-                    Objects.equals(value.getBookId(), bkId));
-
-                if (rd.isPresent()) {
-                    var rentData = rd.get();
-
-                    if (rentData.getRented()) {
-                        return new ResponseEntity<>("Book already rented!", HttpStatus.ALREADY_REPORTED);
-                    } else {
-                        rentData.setRented(true);
-                        rentDataService.save(rentData);
-                        return new ResponseEntity<>("Book rented successfully!", HttpStatus.OK);
-                    }
+                if (rentDataService.findOneBy(value ->
+                    Objects.equals(account.getId(), value.getAccountId()) &&
+                        Objects.equals(book.getId(), value.getBookId())).isPresent()) {
+                    return new ResponseEntity<>("Book already rented!", HttpStatus.ALREADY_REPORTED);
                 } else {
-                    rentDataService.save(new RentData(null, accId, bkId, true));
-                    return new ResponseEntity<>("Book rented successfully!", HttpStatus.OK);
+                    rentDataService.save(new RentData(null, account.getId(), book.getId(), true));
+                    return new ResponseEntity<>("Rented book successfully!", HttpStatus.OK);
                 }
-
             } else {
-                return new ResponseEntity<>("Book not found!", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("Requested book not found!", HttpStatus.NOT_FOUND);
             }
+        } else {
+            return new ResponseEntity<>("Account not found!", HttpStatus.NOT_FOUND);
         }
-
-        return new ResponseEntity<>("Account not found!", HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/delete-account-by-username")
