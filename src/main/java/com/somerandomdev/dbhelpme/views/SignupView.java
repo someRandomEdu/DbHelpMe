@@ -23,6 +23,7 @@ public class SignupView extends Composite<VerticalLayout> {
     private PasswordField newPasswordField  = new PasswordField("Password");
     private PasswordField newConfirmPW = new PasswordField("Confirm Password");
     private Button signUp = new Button("Sign up");
+    private Button signin = new Button("Back to sign in");
     private NativeLabel error = new NativeLabel();
 
     @Autowired
@@ -48,7 +49,11 @@ public class SignupView extends Composite<VerticalLayout> {
             error.setText("Account created successfully!");
         });
 
-        getContent().add(newTextField, newPasswordField, newConfirmPW, signUp, error);
+        signin.addClickListener(event -> {
+            UI.getCurrent().navigate("/app/login");
+        });
+
+        getContent().add(newTextField, newPasswordField, newConfirmPW, signUp, error, signin);
         getStyle().set("gap", "var(--lumo-space-m)");
     }
 }
