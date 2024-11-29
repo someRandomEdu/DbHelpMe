@@ -23,7 +23,7 @@ public class SignupView extends Composite<VerticalLayout> {
     private PasswordField newPasswordField  = new PasswordField("Password");
     private PasswordField newConfirmPW = new PasswordField("Confirm Password");
     private Button signUp = new Button("Sign up");
-    private Button signin = new Button("Back to sign in");
+    private Button signin = new Button("Sign in");
     private NativeLabel error = new NativeLabel();
 
     @Autowired
