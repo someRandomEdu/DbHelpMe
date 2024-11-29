@@ -51,6 +51,7 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
         var rentButton = new Button("Rent");
         var returnButton = new Button("Return");
         var addBookButton = new Button("Add Book");
+        var updateBookButton = new Button("Update Book");
 
         rentButton.addClickListener(event -> {
             var popup = new Dialog("Rent book");
@@ -148,7 +149,8 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
                         authorField.getValue(), publisherField.getValue(), descriptionField.getValue()));
 
                     var notification = new Notification();
-                    
+                    var label = new NativeLabel();
+
                     switch (operationResult.getStatusCode()) {
                         case HttpStatus.OK -> {
                             notification.setText("Successfully added book!");
@@ -162,7 +164,26 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
                             notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY, NotificationVariant.LUMO_ERROR);
                         }
                     }
+
+                    notification.add(new HorizontalLayout(label,
+                        new Button(new Icon("lumo", "cross"), evt -> {
+                        notification.close();
+                    })));
+
+                    notification.open();
                 }, ButtonVariant.LUMO_PRIMARY));
+        });
+
+        // TODO:
+        updateBookButton.addClickListener(event -> {
+            var popup = new Dialog("Update Book");
+            var titleField = new TextField("Title");
+            var authorField = new TextField("Author");
+            var publisherField = new TextField("Publisher");
+            var descriptionField = new TextField("Description");
+            popup.add(new VerticalLayout(titleField, authorField, publisherField, descriptionField));
+            popup.getFooter().add(new Button(), new Button());
+            popup.open();
         });
 
         commandLayout.add(rentButton);
