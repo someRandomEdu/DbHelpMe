@@ -30,22 +30,22 @@ public class SignupView extends Composite<VerticalLayout> {
 
     public SignupView() {
         signUp.addClickListener(event -> {
-           String username = newTextField.getValue();
-           String password = newPasswordField.getValue();
-           String cfpassword = newConfirmPW.getValue();
+        String username = newTextField.getValue();
+        String password = newPasswordField.getValue();
+        String cfpassword = newConfirmPW.getValue();
 
-           if(!(password.equals(cfpassword))) {
-               error.setText("Password do not match!");
-               return;
-           }
+        if(!(password.equals(cfpassword))) {
+           error.setText("Password do not match!");
+           return;
+        }
 
-            if (accountSignupCheck.accountCheck(username)) {
-                error.setText("Username already exists!");
-                return;
-            }
+        if (accountSignupCheck.accountCheck(username)) {
+            error.setText("Username already exists!");
+            return;
+        }
 
-           accountSignupCheck.createAccount(username, password);
-            error.setText("Account created successfully!");
+        accountSignupCheck.createAccount(username, password);
+        error.setText("Account created successfully!");
         });
 
         getContent().add(newTextField, newPasswordField, newConfirmPW, signUp, error);

@@ -281,6 +281,18 @@ public final class AppController {
         }
     }
 
+    @PutMapping("/update-book")
+    public ResponseEntity<String> updateBook(@RequestBody Map<String, String> map) {
+        var operationResult = bookService.updateBook(map.get("originalTitle"), map.get("originalAuthor"),
+            new Book(null, map.get("title"), map.get("author"), map.get("publisher"), map.get("description")));
+
+        if (operationResult) {
+            return new ResponseEntity<>("Book successfully updated!", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Book not found!", HttpStatus.NOT_FOUND);
+        }
+    }
+
     @DeleteMapping("/delete-account-by-username")
     public ResponseEntity<String> deleteAccountByUsername(@RequestBody String username) {
         Optional<Account> account = findAccountByUsername(username);
