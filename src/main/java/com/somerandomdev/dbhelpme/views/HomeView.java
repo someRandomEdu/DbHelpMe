@@ -13,6 +13,9 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
+/**
+ * TODO: Remove this and go to {@link LoginView} directly?
+ * */
 @Route("")
 public class HomeView extends VerticalLayout {
     public HomeView() {
