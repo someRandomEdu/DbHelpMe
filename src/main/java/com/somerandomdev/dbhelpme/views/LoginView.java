@@ -21,8 +21,13 @@ public class LoginView extends Composite<VerticalLayout> {
         PasswordField passwordField = new PasswordField("Password");
         Button logInButton = new Button("Login");
         NativeLabel errorLabel = new NativeLabel();
-        VerticalLayout layout = new VerticalLayout(textField, passwordField, logInButton, errorLabel);
+        Button signUpButton = new Button("Sign up");
+        VerticalLayout layout = new VerticalLayout(textField, passwordField, logInButton, errorLabel, signUpButton);
         layout.setSpacing(true);
+
+        signUpButton.addClickListener(event -> {
+            UI.getCurrent().navigate("/app/signup");
+        });
 
         logInButton.addClickListener((event) -> {
             var username = textField.getValue();
