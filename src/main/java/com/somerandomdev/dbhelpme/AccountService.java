@@ -50,4 +50,6 @@ public final class AccountService extends JpaService<Account, Long> {
 
         return Result.errorReified("Account not found!");
     }
+
+
 }
