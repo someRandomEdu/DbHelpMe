@@ -33,7 +33,7 @@ public final class AppController {
         var result = new ArrayList<Book>();
 
         var rentDataList = rentDataService.findAllBy(rentData ->
-            Objects.equals(accountId, rentData.getAccountId()));
+                Objects.equals(accountId, rentData.getAccountId()));
 
         Predicate<Book> predicate = book -> {
             for (var rentData : rentDataList) {
@@ -87,11 +87,11 @@ public final class AppController {
     @GetMapping("/login")
     public ResponseEntity<Account> login(@RequestBody Account account) {
         Optional<Account> tmp = accountService.findOneBy(
-            value -> Objects.equals(value.getUsername(), account.getUsername()));
+                value -> Objects.equals(value.getUsername(), account.getUsername()));
 
         if (tmp.isPresent()) {
             return Objects.equals(tmp.get().getPassword(), account.getPassword()) ?
-                new ResponseEntity<>(tmp.get(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                    new ResponseEntity<>(tmp.get(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -100,7 +100,7 @@ public final class AppController {
     @GetMapping("find-book")
     public ResponseEntity<Book> findBook(@RequestBody Map<String, String> map) {
         var bk = bookService.findOneBy(value -> Objects.equals(value.getTitle(), map.get("title")) &&
-            Objects.equals(value.getAuthor(), map.get("author")));
+                Objects.equals(value.getAuthor(), map.get("author")));
 
         return bk.isPresent() ? ResponseEntity.ok(bk.get()) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -108,7 +108,7 @@ public final class AppController {
     @GetMapping("find-rented-books")
     public ResponseEntity<List<Book>> findRentedBooks(@RequestBody Account account) {
         Optional<Account> tmp = accountService.findOneBy(
-            value -> Objects.equals(value.getUsername(), account.getUsername()));
+                value -> Objects.equals(value.getUsername(), account.getUsername()));
 
         if (tmp.isPresent()) {
             if (Objects.equals(tmp.get().getPassword(), account.getPassword())) {
@@ -117,7 +117,7 @@ public final class AppController {
                 var books = bookService.findAll();
 
                 var rentDataList = rentDataService.findAllBy(
-                    value -> Objects.equals(value.getAccountId(), accId));
+                        value -> Objects.equals(value.getAccountId(), accId));
 
                 Predicate<Book> isRented = value -> {
                     for (var rentData : rentDataList) {
@@ -161,7 +161,7 @@ public final class AppController {
         account.setIsAdmin(false);
 
         Optional<Account> tmp = accountService.findOneBy(value -> Objects.equals(value.getUsername(),
-            account.getUsername()));
+                account.getUsername()));
 
         if (tmp.isPresent()) {
             return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
@@ -173,32 +173,31 @@ public final class AppController {
     @PostMapping("/add-book")
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
         Optional<Book> tmp = bookService.findOneBy(value -> value.getTitle().equals(book.getTitle()) &&
-            value.getAuthor().equals(book.getAuthor()));
+                value.getAuthor().equals(book.getAuthor()));
 
         return tmp.isPresent() ? new ResponseEntity<>(tmp.get(), HttpStatus.ALREADY_REPORTED) :
-            new ResponseEntity<>(bookService.save(book), HttpStatus.CREATED);
+                new ResponseEntity<>(bookService.save(book), HttpStatus.CREATED);
     }
 
     @PutMapping("/return-book")
     public ResponseEntity<String> returnBook(@RequestBody Map<String, String> map) {
         var acc = accountService.findOneBy(value ->
-            Objects.equals(value.getUsername(), map.get("username")));
+                Objects.equals(value.getUsername(), map.get("username")));
 
         if (acc.isPresent()) {
             var bk = bookService.findOneBy(value -> Objects.equals(value.getTitle(), map.get("title")) &&
-                Objects.equals(value.getAuthor(), map.get("author")));
+                    Objects.equals(value.getAuthor(), map.get("author")));
 
             if (bk.isPresent()) {
                 var rd = rentDataService.findOneBy(value ->
-                    Objects.equals(value.getAccountId(), acc.get().getId()) &&
-                    Objects.equals(value.getBookId(), bk.get().getId()));
+                        Objects.equals(value.getAccountId(), acc.get().getId()) &&
+                                Objects.equals(value.getBookId(), bk.get().getId()));
 
                 if (rd.isPresent()) {
                     var rentData = rd.get();
 
                     if (rentData.getRented()) {
-                        rentData.setRented(false);
-                        rentDataService.save(rentData);
+                        rentDataService.delete(rd.get());
                         return new ResponseEntity<>("Book successfully returned!", HttpStatus.OK);
                     } else {
                         return new ResponseEntity<>("Book is not rented!", HttpStatus.ALREADY_REPORTED);
@@ -217,22 +216,22 @@ public final class AppController {
     @PutMapping("/rent-book")
     public ResponseEntity<String> rentBook(@RequestBody Map<String, String> map) {
         Optional<Account> acc = accountService.findOneBy(
-            value -> Objects.equals(value.getUsername(), map.get("username")));
+                value -> Objects.equals(value.getUsername(), map.get("username")));
 
         if (acc.isPresent()) {
             Account account = acc.get();
 
             if (Objects.equals(account.getPassword(), map.get("password"))) {
                 Optional<Book> bk = bookService.findOneBy(value ->
-                    Objects.equals(value.getTitle(), map.get("title")) &&
-                    Objects.equals(value.getAuthor(), map.get("author")));
+                        Objects.equals(value.getTitle(), map.get("title")) &&
+                                Objects.equals(value.getAuthor(), map.get("author")));
 
                 if (bk.isPresent()) {
                     Book book = bk.get();
 
                     if (rentDataService.findOneBy(value ->
                             Objects.equals(account.getId(), value.getAccountId()) &&
-                            Objects.equals(book.getId(), value.getBookId())).isPresent()) {
+                                    Objects.equals(book.getId(), value.getBookId())).isPresent()) {
                         return new ResponseEntity<>("Book already rented!", HttpStatus.ALREADY_REPORTED);
                     } else {
                         rentDataService.save(new RentData(null, account.getId(), book.getId(), true));
@@ -255,21 +254,21 @@ public final class AppController {
         System.out.println(username);
 
         Optional<Account> acc = accountService.findOneBy(
-            value -> Objects.equals(value.getUsername(), username));
+                value -> Objects.equals(value.getUsername(), username));
 
         if (acc.isPresent()) {
             Account account = acc.get();
 
             Optional<Book> bk = bookService.findOneBy(value ->
-                Objects.equals(value.getTitle(), map.get("title")) &&
-                Objects.equals(value.getAuthor(), map.get("author")));
+                    Objects.equals(value.getTitle(), map.get("title")) &&
+                            Objects.equals(value.getAuthor(), map.get("author")));
 
             if (bk.isPresent()) {
                 Book book = bk.get();
 
                 if (rentDataService.findOneBy(value ->
-                    Objects.equals(account.getId(), value.getAccountId()) &&
-                        Objects.equals(book.getId(), value.getBookId())).isPresent()) {
+                        Objects.equals(account.getId(), value.getAccountId()) &&
+                                Objects.equals(book.getId(), value.getBookId())).isPresent()) {
                     return new ResponseEntity<>("Book already rented!", HttpStatus.ALREADY_REPORTED);
                 } else {
                     rentDataService.save(new RentData(null, account.getId(), book.getId(), true));
@@ -286,7 +285,7 @@ public final class AppController {
     @PutMapping("/update-book")
     public ResponseEntity<String> updateBook(@RequestBody Map<String, String> map) {
         var operationResult = bookService.updateBook(map.get("originalTitle"), map.get("originalAuthor"),
-            new Book(null, map.get("title"), map.get("author"), map.get("publisher"), map.get("description")));
+                new Book(null, map.get("title"), map.get("author"), map.get("publisher"), map.get("description")));
 
         if (operationResult) {
             return new ResponseEntity<>("Book successfully updated!", HttpStatus.OK);
