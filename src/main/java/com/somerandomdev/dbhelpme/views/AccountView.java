@@ -5,6 +5,7 @@ import com.somerandomdev.dbhelpme.AppController;
 import com.somerandomdev.dbhelpme.Book;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -52,6 +53,11 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
         var returnButton = new Button("Return");
         var addBookButton = new Button("Add Book");
         var updateBookButton = new Button("Update Book");
+        var logoutButton = new Button("Log out");
+
+        logoutButton.addClickListener(event -> {
+            UI.getCurrent().navigate("/app/login");
+        });
 
         rentButton.addClickListener(event -> {
             var popup = new Dialog("Rent book");
@@ -186,7 +192,7 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
             popup.open();
         });
 
-        commandLayout.add(rentButton);
+        commandLayout.add(rentButton, returnButton, logoutButton);
         availableBookGrid.setItems(appController.findAllBooks());
 
         add(topLayout, commandLayout, new VerticalLayout(new NativeLabel("Rented books:"), rentedBookGrid),
