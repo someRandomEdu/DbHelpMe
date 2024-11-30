@@ -285,7 +285,7 @@ public final class AppController {
     @PutMapping("/update-book")
     public ResponseEntity<String> updateBook(@RequestBody Map<String, String> map) {
         var operationResult = bookService.updateBook(map.get("originalTitle"), map.get("originalAuthor"),
-                new Book(null, map.get("title"), map.get("author"), map.get("publisher"), map.get("description")));
+                new Book(null, map.get("title"), map.get("author"), map.get("publisher"), map.get("description"), Integer.parseInt(map.get("category_id"))));
 
         if (operationResult) {
             return new ResponseEntity<>("Book successfully updated!", HttpStatus.OK);

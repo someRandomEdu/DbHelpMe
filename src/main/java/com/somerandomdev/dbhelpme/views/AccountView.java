@@ -143,6 +143,8 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
             var authorField = new TextField("Author");
             var publisherField = new TextField("Publisher");
             var descriptionField = new TextField("Description");
+            var categoryIdField = new TextField("category_Id");
+            categoryIdField.setPattern("[0-9]*");  // Only digits are allowed
 
             popup.add(new VerticalLayout(titleField, authorField, publisherField, descriptionField));
 
@@ -151,8 +153,18 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
                     ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR),
 
                 createButton("Proceed", proceedEvent -> {
+                    Integer categoryId = null;
+                    try {
+                        categoryId = Integer.parseInt(categoryIdField.getValue());
+                    } catch (NumberFormatException e) {
+                        // Handle invalid categoryId input (not a valid number)
+                        Notification.show("Invalid Category ID. Please enter a valid number.", 3000, Notification.Position.MIDDLE);
+                        return;
+                    }
+
                     var operationResult = appController.addBook(new Book(null, titleField.getValue(),
-                        authorField.getValue(), publisherField.getValue(), descriptionField.getValue()));
+                            authorField.getValue(), publisherField.getValue(), descriptionField.getValue(), categoryId)); // Assuming 1 is the category_id
+
 
                     var notification = new Notification();
                     var label = new NativeLabel();
