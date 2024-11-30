@@ -10,27 +10,23 @@ import java.util.Objects;
 public final class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // Giữ id là Long
+    private Long id;
 
     private String title;
     private String author;
     private String publisher;
     private String description;
 
-    @Column(name = "category_id")
-    private Integer categoryId;  // category_id là Integer
-
     public Book() {
-        // Constructor không tham số
+
     }
 
-    public Book(Long id, String title, String author, String publisher, String description, Integer categoryId) {
+    public Book(Long id, String title, String author, String publisher, String description) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.description = description;
-        this.categoryId = categoryId;
     }
 
     public Long getId() {
@@ -73,14 +69,6 @@ public final class Book {
         this.description = description;
     }
 
-    public Integer getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
-    }
-
     @Override
     public boolean equals(Object o) {
         return o instanceof Book other && Objects.equals(id, other.id);
@@ -93,7 +81,7 @@ public final class Book {
 
     @Override
     public String toString() {
-        return MessageFormat.format("Book[id = {0}, title = {1}, author = {2}, publisher = {3}, description = {4}, category_id = {5}]",
-                id, title, author, publisher, description, categoryId);
+        return MessageFormat.format("Book[id = {0}, title = {1}, author = {2}, publisher = {3}, description = {4}]",
+            id, title, author, publisher, description);
     }
 }
