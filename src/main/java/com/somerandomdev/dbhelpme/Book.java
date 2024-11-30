@@ -16,17 +16,19 @@ public final class Book {
     private String author;
     private String publisher;
     private String description;
+    private Integer categoryId;
 
     public Book() {
 
     }
 
-    public Book(Long id, String title, String author, String publisher, String description) {
+    public Book(Long id, String title, String author, String publisher, String description, Integer categoryId) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.description = description;
+        this.categoryId = categoryId;
     }
 
     public Long getId() {
@@ -67,6 +69,14 @@ public final class Book {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     @Override
