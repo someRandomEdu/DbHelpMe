@@ -15,12 +15,14 @@ public final class AppController {
     private final AccountService accountService;
     private final BookService bookService;
     private final RentDataService rentDataService;
+    private final RentOperationService rentOperationService;
 
     public AppController(AccountService accountService, BookService bookService,
-                         RentDataService rentDataService) {
+                         RentDataService rentDataService, RentOperationService rentOperationService) {
         this.accountService = accountService;
         this.bookService = bookService;
         this.rentDataService = rentDataService;
+        this.rentOperationService = rentOperationService;
     }
 
     @GetMapping("/find-all-books")
@@ -286,7 +288,7 @@ public final class AppController {
     @PutMapping("/update-book")
     public ResponseEntity<String> updateBook(@RequestBody Map<String, String> map) {
         var operationResult = bookService.updateBook(map.get("originalTitle"), map.get("originalAuthor"),
-            new Book(null, map.get("title"), map.get("author"), map.get("publisher"), map.get("description")));
+            new Book(null, map.get("title"), map.get("author"), map.get("publisher"), map.get("description"), null));
 
         if (operationResult) {
             return new ResponseEntity<>("Book successfully updated!", HttpStatus.OK);

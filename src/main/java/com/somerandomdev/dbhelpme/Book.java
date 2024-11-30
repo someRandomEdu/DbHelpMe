@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.text.MessageFormat;
 import java.util.Objects;
 
+// TODO: Add Long copyCount?
 @Entity
 @Table(name = "books")
 public final class Book {
@@ -17,16 +18,20 @@ public final class Book {
     private String publisher;
     private String description;
 
+    @Column(name = "copy_count")
+    private Long copyCount;
+
     public Book() {
 
     }
 
-    public Book(Long id, String title, String author, String publisher, String description) {
+    public Book(Long id, String title, String author, String publisher, String description, Long copyCount) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.description = description;
+        this.copyCount = copyCount;
     }
 
     public Long getId() {
@@ -67,6 +72,14 @@ public final class Book {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Long getCopyCount() {
+        return copyCount;
+    }
+
+    public void setCopyCount(Long copyCount) {
+        this.copyCount = copyCount;
     }
 
     @Override

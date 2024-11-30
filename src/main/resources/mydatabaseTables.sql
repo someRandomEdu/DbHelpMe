@@ -25,3 +25,10 @@ CREATE TABLE `rent_data` (
    `id` bigint NOT NULL AUTO_INCREMENT,
    PRIMARY KEY (`id`)
  ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+create table rent_operation(
+   id bigint primary key not null auto_increment,
+   account_id bigint not null,
+   rent_time timestamp not null default(NOW()),
+   is_rent boolean not null
+);

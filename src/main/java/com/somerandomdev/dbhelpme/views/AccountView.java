@@ -34,6 +34,8 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
 
     public AccountView(AppController appController) {
         this.appController = appController;
+
+        // TODO: Reorder columns!
         rentedBookGrid = new Grid<>(Book.class);
         availableBookGrid = new Grid<>(Book.class);
     }
@@ -146,7 +148,7 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
 
                 createButton("Proceed", proceedEvent -> {
                     var operationResult = appController.addBook(new Book(null, titleField.getValue(),
-                        authorField.getValue(), publisherField.getValue(), descriptionField.getValue()));
+                        authorField.getValue(), publisherField.getValue(), descriptionField.getValue(), null));
 
                     var notification = new Notification();
                     var label = new NativeLabel();
