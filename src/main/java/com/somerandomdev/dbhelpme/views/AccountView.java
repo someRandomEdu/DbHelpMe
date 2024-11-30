@@ -5,6 +5,7 @@ import com.somerandomdev.dbhelpme.AppController;
 import com.somerandomdev.dbhelpme.Book;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -34,8 +35,6 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
 
     public AccountView(AppController appController) {
         this.appController = appController;
-
-        // TODO: Reorder columns!
         rentedBookGrid = new Grid<>(Book.class);
         availableBookGrid = new Grid<>(Book.class);
     }
@@ -54,6 +53,11 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
         var returnButton = new Button("Return");
         var addBookButton = new Button("Add Book");
         var updateBookButton = new Button("Update Book");
+        var logoutButton = new Button("Log out");
+
+        logoutButton.addClickListener(event -> {
+            UI.getCurrent().navigate("/app/login");
+        });
 
         rentButton.addClickListener(event -> {
             var popup = new Dialog("Rent book");
@@ -139,6 +143,8 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
             var authorField = new TextField("Author");
             var publisherField = new TextField("Publisher");
             var descriptionField = new TextField("Description");
+            var categoryIdField = new TextField("category_Id");
+            categoryIdField.setPattern("[0-9]*");  // Only digits are allowed
 
             popup.add(new VerticalLayout(titleField, authorField, publisherField, descriptionField));
 
@@ -147,8 +153,18 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
                     ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR),
 
                 createButton("Proceed", proceedEvent -> {
+                    Integer categoryId = null;
+                    try {
+                        categoryId = Integer.parseInt(categoryIdField.getValue());
+                    } catch (NumberFormatException e) {
+                        // Handle invalid categoryId input (not a valid number)
+                        Notification.show("Invalid Category ID. Please enter a valid number.", 3000, Notification.Position.MIDDLE);
+                        return;
+                    }
+
                     var operationResult = appController.addBook(new Book(null, titleField.getValue(),
-                        authorField.getValue(), publisherField.getValue(), descriptionField.getValue(), null));
+                            authorField.getValue(), publisherField.getValue(), descriptionField.getValue(), categoryId)); // Assuming 1 is the category_id
+
 
                     var notification = new Notification();
                     var label = new NativeLabel();
@@ -188,7 +204,7 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
             popup.open();
         });
 
-        commandLayout.add(rentButton);
+        commandLayout.add(rentButton, returnButton, logoutButton);
         availableBookGrid.setItems(appController.findAllBooks());
 
         add(topLayout, commandLayout, new VerticalLayout(new NativeLabel("Rented books:"), rentedBookGrid),

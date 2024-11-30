@@ -46,7 +46,14 @@ public class SignupView extends Composite<VerticalLayout> {
         }
 
         accountSignupCheck.createAccount(username, password);
-        error.setText("Account created successfully!");
+        error.setText("Account created successfully! Moving to main screen...");
+//        UI.getCurrent().navigate("/app/account/" + username);
+            UI.getCurrent().access(() -> {
+                UI.getCurrent().getElement().executeJs("setTimeout(function() {" +
+                        "window.location = '" + "/app/account/" + username + "';" +
+                        "}, 1000);"
+                );
+            });
         });
 
         signin.addClickListener(event -> {

@@ -5,33 +5,32 @@ import jakarta.persistence.*;
 import java.text.MessageFormat;
 import java.util.Objects;
 
-// TODO: Add Long copyCount?
 @Entity
 @Table(name = "books")
 public final class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;  // Giữ id là Long
 
     private String title;
     private String author;
     private String publisher;
     private String description;
 
-    @Column(name = "copy_count")
-    private Long copyCount;
+    @Column(name = "category_id")
+    private Integer categoryId;  // category_id là Integer
 
     public Book() {
-
+        // Constructor không tham số
     }
 
-    public Book(Long id, String title, String author, String publisher, String description, Long copyCount) {
+    public Book(Long id, String title, String author, String publisher, String description, Integer categoryId) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.description = description;
-        this.copyCount = copyCount;
+        this.categoryId = categoryId;
     }
 
     public Long getId() {
@@ -74,12 +73,12 @@ public final class Book {
         this.description = description;
     }
 
-    public Long getCopyCount() {
-        return copyCount;
+    public Integer getCategoryId() {
+        return categoryId;
     }
 
-    public void setCopyCount(Long copyCount) {
-        this.copyCount = copyCount;
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     @Override
@@ -94,7 +93,7 @@ public final class Book {
 
     @Override
     public String toString() {
-        return MessageFormat.format("Book[id = {0}, title = {1}, author = {2}, publisher = {3}, description = {4}]",
-            id, title, author, publisher, description);
+        return MessageFormat.format("Book[id = {0}, title = {1}, author = {2}, publisher = {3}, description = {4}, category_id = {5}]",
+                id, title, author, publisher, description, categoryId);
     }
 }
