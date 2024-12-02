@@ -14,8 +14,9 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Objects;
 
-@Route("/app/login")
+@Route("app/login")
 public class LoginView extends Composite<VerticalLayout> {
+    public static String user_name;
     public LoginView(AppController appController) {
         TextField textField = new TextField("Username");
         PasswordField passwordField = new PasswordField("Password");
@@ -31,12 +32,14 @@ public class LoginView extends Composite<VerticalLayout> {
 
         logInButton.addClickListener((event) -> {
             var username = textField.getValue();
+            this.user_name = username;
             var password = passwordField.getValue();
             var loginResult = appController.login(new Account(null, username, password, null));
             var code = loginResult.getStatusCode();
 
             if (Objects.equals(code, HttpStatus.OK)) {
-                UI.getCurrent().navigate("/app/account/" + username);
+//                UI.getCurrent().navigate("/app/account/" + username);
+                UI.getCurrent().navigate("main");
             } if (Objects.equals(code, HttpStatus.UNAUTHORIZED)) {
                 errorLabel.setText("Invalid password!");
             } else if (Objects.equals(code, HttpStatus.NOT_FOUND)) {
@@ -47,5 +50,9 @@ public class LoginView extends Composite<VerticalLayout> {
         });
 
         getContent().add(layout);
+    }
+
+    public static String getUserName() {
+        return user_name;
     }
 }
