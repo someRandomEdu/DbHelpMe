@@ -9,7 +9,7 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.router.RouterLayout;
 
 @Route("main")
-@CssImport("./styles/mainview-layout.css")
+//@CssImport("./styles/mainview-layout.css")
 public class MainView extends HorizontalLayout implements RouterLayout {
 
     private final Div contentArea;

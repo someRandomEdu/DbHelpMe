@@ -1,10 +1,13 @@
 package com.somerandomdev.dbhelpme;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.List;
 import java.util.function.Predicate;
@@ -12,6 +15,8 @@ import java.util.function.Predicate;
 @RestController
 @RequestMapping("/app")
 public final class AppController {
+    @Autowired
+    private ReturnDataService returnDataService;
     private final AccountService accountService;
     private final BookService bookService;
     private final RentDataService rentDataService;
@@ -197,6 +202,17 @@ public final class AppController {
                     var rentData = rd.get();
 
                     if (rentData.getRented()) {
+
+                        var borrowDate = rentData.getBorrowFrom();
+                        LocalDate returnDate = LocalDate.now();
+
+                        ReturnData returnData = new ReturnData();
+                        returnData.setAccountId(rentData.getAccountId());
+                        returnData.setBookId(rentData.getBookId());
+                        returnData.setBorrowDate(borrowDate);
+                        returnData.setReturnDate(returnDate);
+
+                        returnDataService.save(returnData);
                         rentDataService.delete(rd.get());
                         return new ResponseEntity<>("Book successfully returned!", HttpStatus.OK);
                     } else {
@@ -234,7 +250,11 @@ public final class AppController {
                                     Objects.equals(book.getId(), value.getBookId())).isPresent()) {
                         return new ResponseEntity<>("Book already rented!", HttpStatus.ALREADY_REPORTED);
                     } else {
-                        rentDataService.save(new RentData(null, account.getId(), book.getId(), true));
+                        String returnDateStr = map.get("returnDate");
+                        LocalDate returnDate = LocalDate.parse(returnDateStr);
+                        LocalDate borrowDate = LocalDate.now();
+                        String status = map.get("status");
+                        rentDataService.save(new RentData(null, account.getId(), book.getId(), true, status, borrowDate, returnDate));
                         return new ResponseEntity<>("Rented book successfully!", HttpStatus.OK);
                     }
                 } else {

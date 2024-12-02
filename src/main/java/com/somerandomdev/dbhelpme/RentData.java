@@ -3,6 +3,7 @@ package com.somerandomdev.dbhelpme;
 import jakarta.persistence.*;
 
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +19,15 @@ public final class RentData {
     @Column(name = "book_id")
     private Long bookId;
 
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "borrow_from")
+    private LocalDate borrowFrom;
+
+    @Column(name = "borrow_to")
+    private LocalDate borrowTo;
+
     private Boolean rented;
 
     public RentData() {
@@ -29,6 +39,16 @@ public final class RentData {
         this.accountId = accountId;
         this.bookId = bookId;
         this.rented = rented;
+    }
+
+    public RentData(Long id, Long accountId, Long bookId, Boolean rented, String status, LocalDate borrowFrom, LocalDate borrowTo) {
+        this.id = id;
+        this.accountId = accountId;
+        this.bookId = bookId;
+        this.rented = rented;
+        this.status = status;
+        this.borrowFrom = borrowFrom;
+        this.borrowTo = borrowTo;
     }
 
     public Long getId() {
@@ -61,6 +81,30 @@ public final class RentData {
 
     public void setRented(Boolean rented) {
         this.rented = rented;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDate getBorrowFrom() {
+        return borrowFrom;
+    }
+
+    public void setBorrowFrom(LocalDate borrowFrom) {
+        this.borrowFrom = borrowFrom;
+    }
+
+    public LocalDate getBorrowTo() {
+        return borrowTo;
+    }
+
+    public void setBorrowTo(LocalDate borrowTo) {
+        this.borrowTo = borrowTo;
     }
 
     @Override

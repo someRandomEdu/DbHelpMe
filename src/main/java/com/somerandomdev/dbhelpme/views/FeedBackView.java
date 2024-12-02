@@ -11,7 +11,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.Text;
 
 @Route(value = "feedback", layout = MainView.class)
-@CssImport("./styles/feedback-layout.css")
+//@CssImport("./styles/feedback-layout.css")
 public class FeedBackView extends VerticalLayout {
     private TextField titleField;
     private TextArea contentField;
