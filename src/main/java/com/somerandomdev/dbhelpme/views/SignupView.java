@@ -46,7 +46,7 @@ public class SignupView extends Composite<VerticalLayout> {
         String phoneNumber = phone_number.getValue();
         LocalDate localDob = dobField.getValue();
         DateTimeFormatter formatDob = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String DobString = localDob.format(formatDob);
+            String DobString = localDob.format(formatDob);
 
         if(!(password.equals(cfpassword))) {
            error.setText("Password do not match!");

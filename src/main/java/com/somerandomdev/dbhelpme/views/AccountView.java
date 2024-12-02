@@ -8,6 +8,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.NativeLabel;
@@ -22,6 +23,8 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -63,16 +66,23 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
             var popup = new Dialog("Rent book");
             var titleField = new TextField("Title");
             var authorField = new TextField("Author");
-            popup.add(new VerticalLayout(titleField, authorField));
+            var returnDateField = new DatePicker("Return Date");
+            popup.add(new VerticalLayout(titleField, authorField), returnDateField);
 
             popup.getFooter().add(createButton("Cancel", cancelEvent -> popup.close(),
                     ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR),
                 createButton("Proceed", proceedEvent -> {
+                    LocalDate returnDate = returnDateField.getValue();
+                    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    String returnDateString = returnDate.format(format);
+                    String status = "borrowed";
                     var operationResult = appController.rentBook(Map.ofEntries(
                         Map.entry("username", account.getUsername()),
                         Map.entry("password", account.getPassword()),
                         Map.entry("title", titleField.getValue()),
-                        Map.entry("author", authorField.getValue())
+                        Map.entry("author", authorField.getValue()),
+                        Map.entry("status", status),
+                        Map.entry("returnDate", returnDateString)
                     ));
 
                     var notification = new Notification();
@@ -207,8 +217,8 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
         borrowList.addClickListener(event -> {
             Dialog dialog = new Dialog();
 
-            Button BorrowedList = new Button("BorrowedList", e -> UI.getCurrent().navigate("/app/borrowed"));
-            Button ReturnedList = new Button("ReturnedList", e -> UI.getCurrent().navigate("/app/returned"));
+            Button BorrowedList = new Button("BorrowedList", e -> {UI.getCurrent().navigate("/app/borrowed"); dialog.close();});
+            Button ReturnedList = new Button("ReturnedList", e -> {UI.getCurrent().navigate("/app/returned"); dialog.close();});
 
             dialog.add(BorrowedList, ReturnedList);
 
