@@ -54,6 +54,7 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
         var addBookButton = new Button("Add Book");
         var updateBookButton = new Button("Update Book");
         var logoutButton = new Button("Log out");
+        var borrowList = new Button("Borrowed List");
 
         logoutButton.addClickListener(event -> {
             UI.getCurrent().navigate("/app/login");
@@ -204,7 +205,18 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
             popup.open();
         });
 
-        commandLayout.add(rentButton, returnButton, logoutButton);
+        borrowList.addClickListener(event -> {
+            Dialog dialog = new Dialog();
+
+            Button BorrowedList = new Button("BorrowedList", e -> UI.getCurrent().navigate("/app/borrowed"));
+            Button ReturnedList = new Button("ReturnedList", e -> UI.getCurrent().navigate("/app/returned"));
+
+            dialog.add(BorrowedList, ReturnedList);
+
+            dialog.open();
+        });
+
+        commandLayout.add(rentButton, returnButton, borrowList, logoutButton);
         availableBookGrid.setItems(appController.findAllBooks());
 
         add(topLayout, commandLayout, new VerticalLayout(new NativeLabel("Rented books:"), rentedBookGrid),
