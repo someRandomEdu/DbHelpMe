@@ -1,27 +1,57 @@
-use mydatabase;
+DROP DATABASE IF EXISTS mydatabase;
+CREATE DATABASE mydatabase;
+USE mydatabase;
 
 CREATE TABLE `accounts` (
-   `is_admin` bit(1) DEFAULT NULL,
-   `id` bigint NOT NULL AUTO_INCREMENT,
-   `password` varchar(255) DEFAULT NULL,
-   `username` varchar(255) DEFAULT NULL,
+   `is_admin` BIT(1) DEFAULT NULL,
+   `id` INT NOT NULL AUTO_INCREMENT,
+   `password` VARCHAR(255) DEFAULT NULL,
+   `username` VARCHAR(255) DEFAULT NULL,
+   `email` VARCHAR(255),
+   `phone_number` VARCHAR(20),
+   `date_of_birth` DATE,
    PRIMARY KEY (`id`)
- ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `books` (
-   `id` bigint NOT NULL AUTO_INCREMENT,
-   `title` varchar(255) NOT NULL,
-   `author` varchar(255) NOT NULL,
-   `publisher` varchar(255) NOT NULL DEFAULT (_utf8mb4''),
-   `description` varchar(255) NOT NULL DEFAULT (_utf8mb4''),
+   `id` INT NOT NULL AUTO_INCREMENT,
+   `title` VARCHAR(255) NOT NULL,
+   `author` VARCHAR(255) NOT NULL,
+   `publisher` VARCHAR(255) NOT NULL DEFAULT '',
+   `description` VARCHAR(255) NOT NULL DEFAULT '',
+   `category_id` INT,
    PRIMARY KEY (`id`),
-   UNIQUE KEY `title` (`title`,`author`)
- ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+   UNIQUE KEY `title_author` (`title`, `author`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `rent_data` (
-   `rented` bit(1) DEFAULT NULL,
-   `account_id` bigint DEFAULT NULL,
-   `book_id` bigint DEFAULT NULL,
-   `id` bigint NOT NULL AUTO_INCREMENT,
+   `rented` BIT(1) DEFAULT NULL,
+   `account_id` INT DEFAULT NULL,
+   `book_id` INT DEFAULT NULL,
+   `id` INT NOT NULL AUTO_INCREMENT,
    PRIMARY KEY (`id`)
- ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `feedbacks` (
+    `feedback_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT,
+    `title` LONGTEXT,
+    `content` LONGTEXT,
+    FOREIGN KEY (`user_id`) REFERENCES accounts(`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `categories` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL UNIQUE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE book_category(
+    `book_id` INT NOT NULL,
+    `category_id` INT NOT NULL,
+    PRIMARY KEY (`book_id`, `category_id`),
+    FOREIGN KEY (`book_id`) REFERENCES books(`id`) ON UPDATE CASCADE,
+    FOREIGN KEY (`category_id`) REFERENCES categories(`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `accounts` (`is_admin`, `password`, `username`)
+VALUES (b'1', 'admin', 'admin');
