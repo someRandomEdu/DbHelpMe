@@ -22,12 +22,11 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import org.springframework.http.HttpStatus;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@Route("/app/account")
+@Route(value = "/app/account", layout = MainView.class)
 public class AccountView extends VerticalLayout implements HasUrlParameter<String> {
     private final AppController appController;
     private final Grid<Book> rentedBookGrid;
