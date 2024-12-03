@@ -1,4 +1,4 @@
-package com.somerandomdev.dbhelpme;
+package library;
 
 import org.springframework.stereotype.Service;
 import java.util.Optional;
