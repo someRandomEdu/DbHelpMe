@@ -12,7 +12,7 @@ import java.util.List;
 
 import library.*;
 
-@Route("/app/borrowed")
+@Route(value = "/app/borrowed", layout = MainView.class)
 public class Borrowed extends VerticalLayout {
     private final RentDataRepository rentDataRepository;
     private Grid<RentData> grid;

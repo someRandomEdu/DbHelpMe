@@ -10,7 +10,7 @@ import com.vaadin.flow.router.Route;
 
 import java.util.List;
 
-@Route("/app/returned")
+@Route(value = "/app/returned", layout = MainView.class)
 public class Returned extends VerticalLayout {
     private ReturnDataRepository returnDataRepository;
     private Grid<ReturnData> grid;
