@@ -19,10 +19,19 @@ public class AccountSignupCheck {
         return maxId != null ? maxId + 1 : 1L;
     }
 
-    public void createAccount(String username, String password, String email, String phoneNumber, LocalDate dob) {
-        Account newAccount = new Account(updateId(), username, password, false, email, phoneNumber, dob);
+    public void createAccount(String username, String userFullName, String password, String email, String phoneNumber, LocalDate dob) {
+        if (username == null || username.isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
+
+        if (userFullName == null || userFullName.isEmpty()) {
+            throw new IllegalArgumentException("Full Name cannot be null or empty");
+        }
+
+        Account newAccount = new Account(updateId(), userFullName, username, password, false, email, phoneNumber, dob);
         System.out.println("Creating new account for: " + username);
         accountRepository.save(newAccount);
         System.out.println("Account created successfully for: " + username);
     }
+
 }
