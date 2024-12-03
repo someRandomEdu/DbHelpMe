@@ -4,7 +4,7 @@ USE mydatabase;
 
 CREATE TABLE accounts (
    id INT  AUTO_INCREMENT,
-   userFullName varchar(255) not null,
+   `userFullName` varchar(255) not null,
    username VARCHAR(255) NOT NULL unique,
    password VARCHAR(255) Not NULL,
     is_admin BIT(1) DEFAULT NULL,

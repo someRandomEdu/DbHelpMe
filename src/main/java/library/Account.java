@@ -17,6 +17,7 @@ public final class Account {
     private String username;
     private String password;
 
+    @Column(name = "userFullName")
     private String userFullName;
 
     @Column(name = "is_admin")
