@@ -1,0 +1,43 @@
+/* Sidebar container */
+.sidebar {
+    background-color: white !important; /* Đặt nền trắng */
+    width: 250px; /* Chiều rộng cố định */
+    height: 100vh; /* Chiều cao chiếm toàn màn hình */
+    display: flex;
+    flex-direction: column; /* Các mục xếp theo cột */
+    padding: 15px; /* Cách đều nội dung */
+    border-right: 1px solid #e0e0e0; /* Đường viền ngăn cách */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng */
+}
+
+/* Sidebar title */
+.sidebar-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px; /* Cách các mục */
+    text-align: center; /* Căn giữa tiêu đề */
+}
+
+/* Sidebar menu items */
+.sidebar-menu-item {
+    font-size: 16px;
+    color: #555;
+    margin: 10px 0; /* Khoảng cách giữa các mục */
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px; /* Bo góc nhẹ */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar-menu-item:hover {
+    background-color: #f0f0f0; /* Nền sáng khi hover */
+    color: blue; /* Đổi màu chữ khi hover */
+}
+
+/* Active item style */
+.sidebar-menu-item.active {
+    background-color: #e0e0e0; /* Màu nền mục đang được chọn */
+    font-weight: bold;
+    color: blue;
+}
