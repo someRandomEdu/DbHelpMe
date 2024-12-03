@@ -7,10 +7,10 @@ CREATE TABLE accounts (
    userFullName varchar(255) not null,
    username VARCHAR(255) NOT NULL unique,
    password VARCHAR(255) Not NULL,
-   is_admin BIT(1) DEFAULT NULL,
-   email VARCHAR(255),
-   phone_number VARCHAR(20),
-   date_of_birth DATE,
+    is_admin BIT(1) DEFAULT NULL,
+   email VARCHAR(255) not null unique,
+   phone_number VARCHAR(20) not null,
+   date_of_birth DATE not null,
    PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -66,5 +66,8 @@ CREATE TABLE book_category(
     FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO accounts (is_admin, password, username,userFullname)
-VALUES (b'1', 'admin', 'admin','Vũ Nguyễn Trường Minh');
+INSERT INTO accounts (is_admin, password, username,userFullname,phone_number, date_of_birth,email)
+VALUES (b'1', 'admin', 'admin','Vũ Nguyễn Trường Minh','088888','2005-11-14','vutruongminh6d@gmail.com');
+
+INSERT INTO accounts (is_admin, password, username,userFullname,phone_number, date_of_birth,email)
+VALUES (b'1', 'admin1', 'admin1','Lê Sĩ Thái Sơn','088888','2005-11-14','vutruongminhr6d@gmail.com');
