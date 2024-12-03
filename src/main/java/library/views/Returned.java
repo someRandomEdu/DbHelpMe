@@ -1,8 +1,7 @@
 package library.views;
 
-import com.somerandomdev.dbhelpme.RentData;
-import com.somerandomdev.dbhelpme.ReturnData;
-import com.somerandomdev.dbhelpme.ReturnDataRepository;
+import library.ReturnData;
+import library.ReturnDataRepository;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
