@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Route ("app/signup")
 public class SignupView extends Composite<VerticalLayout> {
@@ -73,6 +75,13 @@ public class SignupView extends Composite<VerticalLayout> {
                 int rowsInserted = stmt.executeUpdate();
                 if (rowsInserted > 0) {
                     System.out.println("Sign up succesfully");
+                    error.setText("Sign up succesfully, connecting to your account...");
+                    UI.getCurrent().access(() -> {
+                        UI.getCurrent().getElement().executeJs("setTimeout(function() {" +
+                                "window.location = '/main';" +
+                                "}, 1000);"
+                        );
+                    });
                 } else {
                     System.out.println("Sign up unsuccesfully");
                 }
