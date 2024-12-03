@@ -1,4 +1,4 @@
-package com.somerandomdev.dbhelpme;
+package library;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;

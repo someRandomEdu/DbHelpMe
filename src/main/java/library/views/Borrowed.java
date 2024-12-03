@@ -1,7 +1,6 @@
 package library.views;
 
-import com.somerandomdev.dbhelpme.RentData;
-import com.somerandomdev.dbhelpme.RentDataRepository;
+
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -9,10 +8,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-import static java.awt.AWTEventMulticaster.add;
+import library.*;
 
 @Route("/app/borrowed")
 public class Borrowed extends VerticalLayout {
