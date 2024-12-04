@@ -18,6 +18,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeEvent;
@@ -36,6 +37,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static library.entity.CurrentUser.getPassword;
 import static library.entity.CurrentUser.getUsername;
@@ -47,6 +49,7 @@ public class UserBookListView extends VerticalLayout {
     private final BookRepository bookRepository;
     private final RentDataRepository rentDataRepository;
     private final AccountRepository accountRepository;
+    private static final int PAGE_SIZE = 10;
     private Grid<Book> availableBookGrid;
     private List<Book> books;
 
@@ -64,7 +67,7 @@ public class UserBookListView extends VerticalLayout {
     }
 
     private void setParameter() {
-        availableBookGrid.setAllRowsVisible(true);
+        availableBookGrid.setAllRowsVisible(false);
         Div titleLabel = new Div(new Text("Book List"));
         titleLabel.addClassName("title-container");
         titleLabel.getStyle()
@@ -116,27 +119,39 @@ public class UserBookListView extends VerticalLayout {
                 })).setHeader("Status");
 
         availableBookGrid.setItems(appController.findAllBooks());
+        Pagination<Book> pagination = new Pagination<>(availableBookGrid, books, PAGE_SIZE);
 
-        GridListDataView<Book> dataView = availableBookGrid.setItems(books);
+        GridListDataView<Book> dataView = availableBookGrid.setItems(pagination.getCurrentPageItems());
         TextField searchField = new TextField();
         searchField.setWidth("50%");
         searchField.setPlaceholder("Search");
         searchField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
         searchField.setValueChangeMode(ValueChangeMode.EAGER);
-        searchField.addValueChangeListener(e -> dataView.refreshAll());
 
-        dataView.addFilter(books -> {
+        searchField.addValueChangeListener(e -> {
             String searchRes = searchField.getValue().trim();
 
-            if(searchRes.isEmpty()) return true;
+            // Lọc sách trên toàn bộ danh sách
+            List<Book> filteredBooks = books.stream()
+                    .filter(book -> {
+                        if (searchRes.isEmpty()) {
+                            return true;
+                        }
 
-            boolean matchesTitle = matchesTerm(books.getTitle(), searchRes);
-            boolean matchesAuthor = matchesTerm(books.getAuthor(), searchRes);
+                        boolean matchesTitle = matchesTerm(book.getTitle(), searchRes);
+                        boolean matchesAuthor = matchesTerm(book.getAuthor(), searchRes);
 
-            return matchesAuthor || matchesTitle;
+                        return matchesTitle || matchesAuthor;
+                    })
+                    .collect(Collectors.toList());
+
+            pagination.setItems(filteredBooks);
+            availableBookGrid.setItems(pagination.getCurrentPageItems());
+
+            availableBookGrid.getDataProvider().refreshAll();
         });
+        add(titleLabel, searchField, pagination.getLayout(), availableBookGrid);
 
-        add(titleLabel, searchField, availableBookGrid);
     }
 
     private boolean matchesTerm(String value, String searchTerm) {
@@ -249,7 +264,7 @@ public class UserBookListView extends VerticalLayout {
         rentDataGrid.setItems(rentDataList);
 
         Button closeButton = new Button("Close", event -> {
-            Dialog dialog = (Dialog) dialogLayout.getParent().orElse(null); // Lấy đối tượng dialog từ layout
+            Dialog dialog = (Dialog) dialogLayout.getParent().orElse(null);
             if (dialog != null) {
                 dialog.close();
             }
@@ -323,4 +338,5 @@ public class UserBookListView extends VerticalLayout {
 
         return days;
     }
+
 }

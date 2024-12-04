@@ -75,7 +75,6 @@ public class MainView extends AppLayout implements RouterLayout {
         addToDrawer(appTitle, scroller);
         addToNavbar(viewHeader);
 
-        setDrawerOpened(false);
         setPrimarySection(Section.DRAWER);
     }
 
@@ -84,6 +83,7 @@ public class MainView extends AppLayout implements RouterLayout {
         SideNav sideNav = new SideNav();
 
         String username = getUserName();
+        UI.getCurrent().navigate("app/account/" + username);
 
         sideNav.addItem(new SideNavItem("Dashboard", "/app/account/" + username,
                 VaadinIcon.DASHBOARD.create()));
