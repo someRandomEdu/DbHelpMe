@@ -35,13 +35,19 @@ public class BorrowedTab extends VerticalLayout {
             if (event.getSelectedTab() == borrowedTab) {
                 removeAll();
                 add(tabSheet, borrowedTabContent);
+                setAlignItems(Alignment.CENTER);
+                setSizeFull();
             } else if (event.getSelectedTab() == returnedTab) {
                 removeAll();
                 add(tabSheet, returnedTabContent);
+                setAlignItems(Alignment.CENTER);
+                setSizeFull();
             }
         });
 
         add(tabSheet, borrowedTabContent);
+        setAlignItems(Alignment.CENTER);
+        setSizeFull();
     }
 }
 

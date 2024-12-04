@@ -30,6 +30,7 @@ public final class AppController {
         this.rentDataService = rentDataService;
     }
 
+
     @GetMapping("/find-all-books")
     public List<Book> findAllBooks() {
         return bookService.findAll();
