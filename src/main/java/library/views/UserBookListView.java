@@ -211,7 +211,7 @@ public class UserBookListView extends VerticalLayout {
             notification.open();
 
             UI.getCurrent().access(() -> {
-                UI.getCurrent().getPage().executeJs("setTimeout(() => { location.reload(); }, 1000);");
+                UI.getCurrent().getPage().executeJs("setTimeout(() => { window.location.href = '/booklist'; }, 1000);");
             });
         });
 
