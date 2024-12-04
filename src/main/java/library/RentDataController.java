@@ -3,6 +3,7 @@ package library;
 import library.entity.Book;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,8 @@ public final class RentDataController {
         this.bookService = bookService;
         this.accountService = accountService;
     }
+
+
 
     @GetMapping("/find-all-rented-books")
     public List<Book> findAllRentedBooks(@RequestBody Account account) {
@@ -61,5 +64,10 @@ public final class RentDataController {
         var accounts = accountService.findAllBy((account) -> account.getUsername().equals(accountUsername));
         var books = bookService.findAllBy((book) -> book.getTitle().equals(bookTitle) && book.getAuthor().equals(bookAuthor));
         return !accounts.isEmpty() && !books.isEmpty() && isRented(accounts.getFirst().getId(), books.getFirst().getId());
+    }
+
+    @GetMapping("/borrow-to")
+    public LocalDate getBorrowTo(@RequestParam Long bookId, @RequestParam Long accountId) {
+        return service.getBorrowTo(bookId, accountId);
     }
 }
