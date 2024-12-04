@@ -1,10 +1,7 @@
 package library;
 
 import library.entity.Book;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,5 +34,25 @@ public final class BookController {
         }
 
         return Optional.empty();
+    }
+
+    @GetMapping("/find-title-by-bookId")
+    public String getTitleByBookId(@RequestParam Long bookId) {
+        Optional<Book> bookOpt = service.findById(bookId);
+        if (bookOpt.isPresent()) {
+            return bookOpt.get().getTitle();
+        } else {
+            return "Book not found";
+        }
+    }
+
+    @GetMapping("/find-author-by-id")
+    public String getAuthorByBookId(@RequestParam Long bookId) {
+        Optional<Book> bookOpt = service.findById(bookId);
+        if (bookOpt.isPresent()) {
+            return bookOpt.get().getAuthor();
+        } else {
+            return "Book not found";
+        }
     }
 }

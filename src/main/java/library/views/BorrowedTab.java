@@ -10,6 +10,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.TabsVariant;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.function.SerializableSupplier;
+import library.AppController;
+import library.BookRepository;
 import library.RentDataRepository;
 import library.ReturnDataRepository;
 
@@ -17,10 +19,15 @@ import library.ReturnDataRepository;
 public class BorrowedTab extends VerticalLayout {
     private final RentDataRepository rentDataRepository;
     private ReturnDataRepository returnDataRepository;
+    private final AppController appController;
+    private final BookRepository bookRepository;
 
-    public BorrowedTab(RentDataRepository rentDataRepository, ReturnDataRepository returnDataRepository) {
+
+    public BorrowedTab(AppController appController, RentDataRepository rentDataRepository, ReturnDataRepository returnDataRepository, BookRepository bookRepository ) {
+        this.appController = appController;
         this.rentDataRepository = rentDataRepository;
         this.returnDataRepository = returnDataRepository;
+        this.bookRepository = bookRepository;
         Tab borrowedTab = new Tab("Borrowed");
         Tab returnedTab = new Tab("Returned");
 
@@ -28,7 +35,7 @@ public class BorrowedTab extends VerticalLayout {
 
         tabSheet.addThemeVariants(TabsVariant.LUMO_EQUAL_WIDTH_TABS);
 
-        LazyComponent borrowedTabContent = new LazyComponent(() -> new Borrowed(rentDataRepository));
+        LazyComponent borrowedTabContent = new LazyComponent(() -> new Borrowed(appController, bookRepository, rentDataRepository));
         LazyComponent returnedTabContent = new LazyComponent(() -> new Returned(returnDataRepository));
 
         tabSheet.addSelectedChangeListener(event -> {
@@ -48,6 +55,11 @@ public class BorrowedTab extends VerticalLayout {
         add(tabSheet, borrowedTabContent);
         setAlignItems(Alignment.CENTER);
         setSizeFull();
+
+        tabSheet.setWidthFull();
+        tabSheet.setHeight("50px");
+        borrowedTabContent.setSizeFull();
+        returnedTabContent.setSizeFull();
     }
 }
 
