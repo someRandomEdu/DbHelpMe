@@ -2,22 +2,50 @@ package library.views;
 
 
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import library.*;
+import library.entity.Book;
+import library.entity.CurrentUser;
+import org.springframework.http.HttpStatus;
+
+import static library.entity.CurrentUser.getPassword;
+import static library.entity.CurrentUser.getUsername;
+import static library.views.LoginView.getUserName;
 
 @Route(value = "/app/borrowed", layout = MainView.class)
 public class Borrowed extends VerticalLayout {
     private final RentDataRepository rentDataRepository;
+    private final AppController appController;
+    private final BookRepository bookRepository;
     private Grid<RentData> grid;
 
-    public Borrowed(RentDataRepository rentDataRepository) {
+    public Borrowed(AppController appController, BookRepository bookRepository, RentDataRepository rentDataRepository) {
+        this.appController = appController;
+        this.bookRepository = bookRepository;
+
         Div titleLabel = new Div(new Text("Borrowed List"));
         titleLabel.addClassName("title-container");
         titleLabel.getStyle()
@@ -46,9 +74,66 @@ public class Borrowed extends VerticalLayout {
             return "Not Borrowed";  // Nếu sách không còn đang mượn
         }).setHeader("Status");
 
+        grid.addColumn(
+                new ComponentRenderer<>(Button::new, (button, rentData) -> {
+                    button.setIcon(new Icon(VaadinIcon.REPLY));
+                    button.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
+                    Long bookId = rentData.getBookId();
+                    Optional<Book> bookOpt = bookRepository.findById(bookId);
+                    String bookTitle = "Book not found";
+                    String bookAuthor = "Author not found";
+
+                    if (bookOpt.isPresent()) {
+                        bookTitle = bookOpt.get().getTitle();
+                        bookAuthor = bookOpt.get().getAuthor();
+                    }
+
+                    TextField titleField = new TextField();
+                    titleField.setValue(bookTitle);
+                    titleField.setReadOnly(true);
+
+                    TextField authorField = new TextField();
+                    authorField.setValue(bookAuthor);
+                    authorField.setReadOnly(true);
+
+                    button.addClickListener(e -> {
+                        var operationResult = appController.returnBook(Map.ofEntries(
+                                Map.entry("username", getUsername()),
+                                Map.entry("password", getPassword()),
+                                Map.entry("title", titleField.getValue()),
+                                Map.entry("author", authorField.getValue())
+                        ));
+
+                        var notification = new Notification();
+
+                        var notificationLayout = new HorizontalLayout(new NativeLabel(operationResult.getBody()),
+                                new Button(new Icon("lumo", "cross"),
+                                        evt -> notification.close()));
+
+                        notificationLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+                        notification.add(notificationLayout);
+
+                        switch (operationResult.getStatusCode()) {
+                            case HttpStatus.OK -> notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                            case HttpStatus.ALREADY_REPORTED -> notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+                            default -> notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                        }
+
+                        notification.open();
+
+                        UI.getCurrent().access(() -> {
+                            UI.getCurrent().getPage().executeJs("setTimeout(() => { window.location.href = '/borrowedTab'; }, 1000);");
+                        });
+                    });
+
+                })).setHeader("");
+
+
         List<RentData> data = rentDataRepository.findAll();
 
         grid.setItems(data);
+
         setAlignItems(Alignment.CENTER);
         add(titleLabel, grid);
         setSizeFull();
