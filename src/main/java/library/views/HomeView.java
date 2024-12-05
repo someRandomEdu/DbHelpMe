@@ -10,7 +10,7 @@ import com.vaadin.flow.router.Route;
 /**
  * TODO: Remove this and go to {@link LoginView} directly?
  * */
-@Route("")
+//@Route("")
 public class HomeView extends VerticalLayout {
     public HomeView() {
         add(new H1("Welcome to your new application"));

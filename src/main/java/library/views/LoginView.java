@@ -1,111 +1,87 @@
 package library.views;
 
-import library.Account;
-import library.AppController;
-import library.entity.CurrentUser;
-import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.NativeLabel;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.login.LoginOverlay;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Route;
-import library.helper.DatabaseHelper;
-import org.springframework.http.HttpStatus;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Objects;
+import java.sql.*;
 
-@Route("app/login")
-public class LoginView extends Composite<VerticalLayout> {
+import com.vaadin.flow.component.login.AbstractLogin;
+import com.vaadin.flow.component.html.Div;
+
+@Route("")
+public class LoginView extends Div {
     public static String user_name;
-    TextField textField = new TextField("Username");
-    PasswordField passwordField = new PasswordField("Password");
-    Button logInButton = new Button("Login");
-    NativeLabel errorLabel = new NativeLabel();
-    Button signUpButton = new Button("Sign up");
-    VerticalLayout layout = new VerticalLayout(textField, passwordField, logInButton, errorLabel, signUpButton);
-    public LoginView(AppController appController) {
-        layout.setSpacing(true);
+    private NativeLabel error = new NativeLabel();
+    private LoginOverlay loginOverlay;
 
-        signUpButton.addClickListener(event -> {
+    public LoginView() {
+        loginOverlay = new LoginOverlay();
+        loginOverlay.setTitle("Chua nghi ra");
+        loginOverlay.setDescription("Better than UET-leak");
+        loginOverlay.addLoginListener(this::onLogin);
+
+        Button signupButton = new Button("Sign up");
+        signupButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+        signupButton.addClickListener(event -> {
             UI.getCurrent().navigate("/app/signup");
         });
 
-        logInButton.addClickListener((event) -> {
-            var username = textField.getValue();
-            this.user_name = username;
-            var password = passwordField.getValue();
-            var loginResult = appController.login(new Account(null, username, password, null));
-            var code = loginResult.getStatusCode();
+        loginOverlay.getFooter().add(signupButton);
+        loginOverlay.getFooter().add(error);
 
-            if (login(username, password)) {
-//                UI.getCurrent().navigate("/app/account/" + username);
-                UI.getCurrent().navigate("main");
-                loadUserData(user_name);
-            }  if (Objects.equals(code, HttpStatus.UNAUTHORIZED)) {
-                errorLabel.setText("Invalid password!");
-            } else if (Objects.equals(code, HttpStatus.NOT_FOUND)) {
-                errorLabel.setText("User not found!");
-            } else {
-                errorLabel.setText("Unknown login error!");
-            }
-        });
+        add(loginOverlay);
+        loginOverlay.setOpened(true);
+        loginOverlay.getElement().setAttribute("no-autofocus", "");
+    }
 
-        getContent().add(layout);
+    private void onLogin(AbstractLogin.LoginEvent event) {
+        String username = event.getUsername();
+        user_name = username;
+        String password = event.getPassword();
+
+        if (checkCredentials(username, password)) {
+            System.out.println("Đăng nhập thành công!");
+            UI.getCurrent().navigate("main");
+        } else {
+            error.setText("Invalid user name or password");
+            System.out.println("Thông tin đăng nhập không đúng!");
+            error.getElement().getStyle().set("color", "red");
+//            resetForm(event.getSource());
+            resetForm(); // Reset form
+        }
+    }
+
+    private void resetForm() {
+        loginOverlay.setOpened(false);
+        loginOverlay.setOpened(true);
     }
 
     public static String getUserName() {
         return user_name;
     }
 
-    private static void loadUserData(String user_name) {
-        try {
-            String query = "SELECT * FROM accounts WHERE username = ?";
-            Connection conn = DatabaseHelper.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, user_name);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                CurrentUser.setId(rs.getInt("id"));
-                CurrentUser.setUsername(rs.getString("username"));
-                CurrentUser.setPassword(rs.getString("password"));
-                CurrentUser.setUserFullName(rs.getString("userFullName"));
-                CurrentUser.setIsAdmin(rs.getBoolean("is_admin"));
-                CurrentUser.setEmail(rs.getString("email"));
-                CurrentUser.setPhoneNumber(rs.getString("phone_number"));
-                CurrentUser.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
-            }
+    private boolean checkCredentials(String username, String password) {
+        String jdbcUrl = "jdbc:mysql://localhost:3306/mydatabase";
+        String dbUsername = "root";
+        String dbPassword = "130405";
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
+            String query = "SELECT * FROM accounts WHERE username = ? AND password = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, username);
+                statement.setString(2, password);
 
-
-    private boolean login(String user_name, String password) {
-        DatabaseHelper.connectToDatabase();
-        String query = "SELECT * FROM accounts WHERE username = ?";
-        try (Connection conn = DatabaseHelper.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, user_name);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                String acc_password = rs.getString("password");
-                if (acc_password.equals(password)) {
-                    return true;
-                }
+                ResultSet resultSet = statement.executeQuery();
+                return resultSet.next();
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
-
-
-
 }
