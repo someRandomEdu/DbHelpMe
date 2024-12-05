@@ -101,6 +101,10 @@ public class MainView extends AppLayout implements RouterLayout {
                 VaadinIcon.SHARE.create()));
         sideNav.addItem(new SideNavItem("Log out", "",
                 VaadinIcon.SIGN_OUT_ALT.create()));
+        if (CurrentUser.isAdmin()) {
+            sideNav.addItem(new SideNavItem("Show Feedback", "show_feedback"));
+        }
+
 
         return sideNav;
     }

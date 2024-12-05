@@ -11,6 +11,9 @@ import java.sql.*;
 
 import com.vaadin.flow.component.login.AbstractLogin;
 import com.vaadin.flow.component.html.Div;
+import library.entity.CurrentUser;
+import library.helper.DatabaseHelper;
+
 
 @Route("")
 public class LoginView extends Div {
@@ -44,8 +47,9 @@ public class LoginView extends Div {
         user_name = username;
         String password = event.getPassword();
 
-        if (checkCredentials(username, password)) {
+        if (login(username, password)) {
             System.out.println("Đăng nhập thành công!");
+            loadUserData(user_name);
             UI.getCurrent().navigate("main");
         } else {
             error.setText("Invalid user name or password");
@@ -65,23 +69,49 @@ public class LoginView extends Div {
         return user_name;
     }
 
-    private boolean checkCredentials(String username, String password) {
-        String jdbcUrl = "jdbc:mysql://localhost:3306/mydatabase";
-        String dbUsername = "root";
-        String dbPassword = "130405";
 
-        try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
-            String query = "SELECT * FROM accounts WHERE username = ? AND password = ?";
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setString(1, username);
-                statement.setString(2, password);
 
-                ResultSet resultSet = statement.executeQuery();
-                return resultSet.next();
+    private static void loadUserData(String user_name) {
+        try {
+            String query = "SELECT * FROM accounts WHERE username = ?";
+            Connection conn = DatabaseHelper.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, user_name);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                CurrentUser.setId(rs.getInt("id"));
+                CurrentUser.setUsername(rs.getString("username"));
+                CurrentUser.setPassword(rs.getString("password"));
+                CurrentUser.setUserFullName(rs.getString("userFullName"));
+                CurrentUser.setIsAdmin(rs.getBoolean("is_admin"));
+                CurrentUser.setEmail(rs.getString("email"));
+                CurrentUser.setPhoneNumber(rs.getString("phone_number"));
+                CurrentUser.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private boolean login(String user_name, String password) {
+        DatabaseHelper.connectToDatabase();
+        String query = "SELECT * FROM accounts WHERE username = ?";
+        try (Connection conn = DatabaseHelper.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, user_name);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String acc_password = rs.getString("password");
+                if (acc_password.equals(password)) {
+                    return true;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
+
 }
