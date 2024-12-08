@@ -9,7 +9,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "accounts")
 public final class Account {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;  // Giữ id là Long

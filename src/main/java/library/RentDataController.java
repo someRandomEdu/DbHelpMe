@@ -21,8 +21,6 @@ public final class RentDataController {
         this.accountService = accountService;
     }
 
-
-
     @GetMapping("/find-all-rented-books")
     public List<Book> findAllRentedBooks(@RequestBody Account account) {
         return findAllRentedBooksByAccountId(account.getId());
