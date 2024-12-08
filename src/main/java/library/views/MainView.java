@@ -46,7 +46,6 @@ import static library.views.LoginView.getUserName;
 
 @Route("main")
 public class MainView extends AppLayout implements RouterLayout {
-
     public MainView(AppController appController) {
         DrawerToggle toggle = new DrawerToggle();
 
