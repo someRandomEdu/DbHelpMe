@@ -66,6 +66,15 @@ CREATE TABLE book_category(
     FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+create table rent_report(
+    id int primary key not null auto_increment,
+    account_id int not null references accounts(id) on delete cascade,
+    book_id int not null references books(id) on delete cascade,
+    is_rent_operation boolean not null default false, -- true means rent operation, false means return!
+    from_date date not null default (curdate()),
+    to_date date -- not null if rent, null if return?
+);
+
 INSERT INTO accounts (is_admin, password, username,userFullname,phone_number, date_of_birth,email)
 VALUES (b'1', 'admin', 'admin','Vũ Nguyễn Trường Minh','088888','2005-11-14','vutruongminh6d@gmail.com');
 

@@ -138,11 +138,13 @@ public class SignupView extends Div {
                 stmt.setBoolean(4,false);
                 stmt.setString(5, email);
                 stmt.setString(6, phoneNumber);
+
                 if (localDob != null) {
                     stmt.setDate(7, Date.valueOf(localDob));
                 } else {
                     stmt.setNull(7, java.sql.Types.DATE);
                 }
+
                 int rowsInserted = stmt.executeUpdate();
                 if (rowsInserted > 0) {
                     System.out.println("Sign up succesfully");
@@ -162,12 +164,12 @@ public class SignupView extends Div {
         });
 
         signin.addClickListener(event -> {
-            UI.getCurrent().navigate("/app/login");
+            UI.getCurrent().navigate("/app"); // Login screen was moved to /app smh
         });
     }
 }
 
-    //    private TextField fullNameField = new TextField("Full Name");
+//    private TextField fullNameField = new TextField("Full Name");
 //    private TextField newTextField = new TextField("User name");
 //    private PasswordField newPasswordField  = new PasswordField("Password");
 //    private PasswordField newConfirmPW = new PasswordField("Confirm Password");

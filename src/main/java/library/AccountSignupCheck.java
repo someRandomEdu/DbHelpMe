@@ -1,5 +1,6 @@
 package library;
 
+import library.entity.Account;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,9 +15,9 @@ public class AccountSignupCheck {
         return accountRepository.existsByUsername(username);
     }
 
-    public Long updateId() {
-        Long maxId = accountRepository.findMaxId();
-        return maxId != null ? maxId + 1 : 1L;
+    public Integer updateId() {
+        Integer maxId = accountRepository.findMaxId();
+        return maxId != null ? maxId + 1 : 1;
     }
 
     public void createAccount(String username, String userFullName, String password, String email, String phoneNumber, LocalDate dob) {
@@ -33,5 +34,4 @@ public class AccountSignupCheck {
         accountRepository.save(newAccount);
         System.out.println("Account created successfully for: " + username);
     }
-
 }

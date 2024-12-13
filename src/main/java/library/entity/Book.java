@@ -10,7 +10,7 @@ import java.util.Objects;
 public final class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String title;
     private String author;
@@ -22,7 +22,7 @@ public final class Book {
 
     }
 
-    public Book(Long id, String title, String author, String publisher, String description, Integer categoryId) {
+    public Book(Integer id, String title, String author, String publisher, String description, Integer categoryId) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -31,11 +31,11 @@ public final class Book {
         this.categoryId = categoryId;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

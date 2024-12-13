@@ -79,7 +79,7 @@ public class Borrowed extends VerticalLayout {
                     button.setIcon(new Icon(VaadinIcon.REPLY));
                     button.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
-                    Long bookId = rentData.getBookId();
+                    var bookId = rentData.getBookId();
                     Optional<Book> bookOpt = bookRepository.findById(bookId);
                     String bookTitle = "Book not found";
                     String bookAuthor = "Author not found";

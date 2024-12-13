@@ -9,13 +9,13 @@ import java.time.LocalDate;
 public final class ReturnData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "account_id")
-    private Long accountId;
+    private Integer accountId;
 
     @Column(name = "book_id")
-    private Long bookId;
+    private Integer bookId;
 
     @Column(name = "borrow_date")
     private LocalDate borrowDate;
@@ -27,7 +27,7 @@ public final class ReturnData {
 
     }
 
-    public ReturnData(Long id, Long accountId, Long bookId, LocalDate borrowDate, LocalDate returnDate) {
+    public ReturnData(Integer id, Integer accountId, Integer bookId, LocalDate borrowDate, LocalDate returnDate) {
         this.id = id;
         this.accountId = accountId;
         this.bookId = bookId;
@@ -35,22 +35,22 @@ public final class ReturnData {
         this.returnDate = returnDate;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
-    public Long getAccountId() {
+    public Integer getAccountId() {
         return accountId;
     }
-    public void setAccountId(Long accountId) {
+    public void setAccountId(Integer accountId) {
         this.accountId = accountId;
     }
-    public Long getBookId() {
+    public Integer getBookId() {
         return bookId;
     }
-    public void setBookId(Long bookId) {
+    public void setBookId(Integer bookId) {
         this.bookId = bookId;
     }
     public LocalDate getBorrowDate() {

@@ -37,7 +37,7 @@ public final class BookController {
     }
 
     @GetMapping("/find-title-by-bookId")
-    public String getTitleByBookId(@RequestParam Long bookId) {
+    public String getTitleByBookId(@RequestParam Integer bookId) {
         Optional<Book> bookOpt = service.findById(bookId);
         if (bookOpt.isPresent()) {
             return bookOpt.get().getTitle();
@@ -47,7 +47,7 @@ public final class BookController {
     }
 
     @GetMapping("/find-author-by-id")
-    public String getAuthorByBookId(@RequestParam Long bookId) {
+    public String getAuthorByBookId(@RequestParam Integer bookId) {
         Optional<Book> bookOpt = service.findById(bookId);
         if (bookOpt.isPresent()) {
             return bookOpt.get().getAuthor();

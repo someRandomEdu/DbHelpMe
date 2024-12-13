@@ -1,4 +1,4 @@
-    <?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -194,12 +194,12 @@
         </dependency>
         <!--    END DEPENDENCIES FOR DATABASE DRIVERS-->
 
-        <!--    BEGIN DEPENDENCIES FOR JAVAFX 21.0.4-->
+        <!--    BEGIN DEPENDENCIES FOR JAVAFX 23.0.1-->
         <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>21.0.4</version>
+            <version>23.0.1</version>
         </dependency>
 
         <!--    BEGIN DEPENDENCIES FOR DATABASE DRIVERS-->
@@ -211,12 +211,12 @@
         </dependency>
         <!--    END DEPENDENCIES FOR DATABASE DRIVERS-->
 
-        <!--    BEGIN DEPENDENCIES FOR JAVAFX 21.0.4-->
+        <!--    BEGIN DEPENDENCIES FOR JAVAFX 23.0.1-->
         <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>21.0.4</version>
+            <version>23.0.1</version>
         </dependency>
     </dependencies>
 
