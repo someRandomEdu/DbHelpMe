@@ -234,7 +234,8 @@ public final class AppController {
     @PutMapping("/rent-book")
     public ResponseEntity<String> rentBook(@RequestBody Map<String, String> map) {
         Optional<Account> acc = accountService.findOneBy(
-                value -> Objects.equals(value.getUsername(), map.get("username")));
+                value -> Objects.equals(value.getUsername(), map.get("username"))
+        );
 
         if (acc.isPresent()) {
             Account account = acc.get();
@@ -242,22 +243,37 @@ public final class AppController {
             if (Objects.equals(account.getPassword(), map.get("password"))) {
                 Optional<Book> bk = bookService.findOneBy(value ->
                         Objects.equals(value.getTitle(), map.get("title")) &&
-                                Objects.equals(value.getAuthor(), map.get("author")));
+                                Objects.equals(value.getAuthor(), map.get("author"))
+                );
 
                 if (bk.isPresent()) {
                     Book book = bk.get();
 
-                    if (rentDataService.findOneBy(value ->
+                    boolean alreadyRentedByUser = rentDataService.findOneBy(value ->
                             Objects.equals(account.getId(), value.getAccountId()) &&
-                                    Objects.equals(book.getId(), value.getBookId())).isPresent()) {
+                                    Objects.equals(book.getId(), value.getBookId())
+                    ).isPresent();
+
+                    if (alreadyRentedByUser) {
                         return new ResponseEntity<>("Book already rented!", HttpStatus.ALREADY_REPORTED);
-                    } else {
+                    }
+
+                    if (book.getCurrent() > 0) {
+                        book.setCurrent(book.getCurrent() - 1);
+                        bookService.save(book);
+
                         String returnDateStr = map.get("returnDate");
                         LocalDate returnDate = LocalDate.parse(returnDateStr);
                         LocalDate borrowDate = LocalDate.now();
                         String status = map.get("status");
-                        rentDataService.save(new RentData(null, account.getId(), book.getId(), true, status, borrowDate, returnDate));
+
+                        rentDataService.save(new RentData(
+                                null, account.getId(), book.getId(), true, status, borrowDate, returnDate
+                        ));
+
                         return new ResponseEntity<>("Rented book successfully!", HttpStatus.OK);
+                    } else {
+                        return new ResponseEntity<>("Book is currently unavailable!", HttpStatus.BAD_REQUEST);
                     }
                 } else {
                     return new ResponseEntity<>("Requested book not found!", HttpStatus.NOT_FOUND);
@@ -269,6 +285,7 @@ public final class AppController {
             return new ResponseEntity<>("Account not found!", HttpStatus.NOT_FOUND);
         }
     }
+
 
     @PutMapping("/rent-book-by-username")
     public ResponseEntity<String> rentBookByUsername(@RequestBody Map<String, String> map) {
@@ -307,7 +324,7 @@ public final class AppController {
     @PutMapping("/update-book")
     public ResponseEntity<String> updateBook(@RequestBody Map<String, String> map) {
         var operationResult = bookService.updateBook(map.get("originalTitle"), map.get("originalAuthor"),
-                new Book(null, map.get("title"), map.get("author"), map.get("publisher"), map.get("description"), Integer.parseInt(map.get("category_id"))));
+                new Book(null, map.get("title"), map.get("author"), map.get("publisher"), map.get("description"), Integer.parseInt(map.get("category_id")), Integer.parseInt(map.get("current")) ));
 
         if (operationResult) {
             return new ResponseEntity<>("Book successfully updated!", HttpStatus.OK);

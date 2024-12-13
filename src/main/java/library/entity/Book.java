@@ -17,18 +17,20 @@ public final class Book {
     private String publisher;
     private String description;
     private Integer categoryId;
+    private Integer current;
 
     public Book() {
 
     }
 
-    public Book(Integer id, String title, String author, String publisher, String description, Integer categoryId) {
+    public Book(Integer id, String title, String author, String publisher, String description, Integer categoryId, Integer current) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.description = description;
         this.categoryId = categoryId;
+        this.current = current;
     }
 
     public Integer getId() {
@@ -77,6 +79,14 @@ public final class Book {
 
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public Integer getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Integer current) {
+        this.current = current;
     }
 
     @Override

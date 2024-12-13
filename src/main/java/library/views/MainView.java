@@ -30,7 +30,14 @@ public class MainView extends AppLayout implements RouterLayout {
                 .set("line-height", "var(--lumo-size-l)")
                 .set("margin", "0 var(--lumo-space-m)");
 
-        SideNav nav = getPrimaryNavigation();
+        SideNav nav;
+        if(CurrentUser.isAdmin()) {
+            nav = getAdminNavigation();
+        } else {
+            nav = getPrimaryNavigation();
+        }
+        nav.addItem(new SideNavItem("Log out", "",
+                VaadinIcon.SIGN_OUT_ALT.create()));
 
         H2 viewTitle = new H2("My Library");
         viewTitle.getStyle().set("font-size", "var(--lumo-font-size-l)")
@@ -74,12 +81,14 @@ public class MainView extends AppLayout implements RouterLayout {
                 VaadinIcon.USER.create()));
         sideNav.addItem(new SideNavItem("Feedback", "/feedback",
                 VaadinIcon.SHARE.create()));
-        sideNav.addItem(new SideNavItem("Log out", "",
-                VaadinIcon.SIGN_OUT_ALT.create()));
-        if (CurrentUser.isAdmin()) {
-            sideNav.addItem(new SideNavItem("Show Feedback", "show_feedback"));
-        }
 
+        return sideNav;
+    }
+
+    private SideNav getAdminNavigation() {
+        SideNav sideNav = getPrimaryNavigation();
+        sideNav.addItem(new SideNavItem("Show Feedback", "show_feedback",
+                VaadinIcon.BROWSER.create()));
 
         return sideNav;
     }

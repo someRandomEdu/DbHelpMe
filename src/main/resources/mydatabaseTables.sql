@@ -15,15 +15,17 @@ CREATE TABLE accounts (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE books (
-   id INT NOT NULL AUTO_INCREMENT,
-   title VARCHAR(255) NOT NULL,
-   author VARCHAR(255) NOT NULL,
-   publisher VARCHAR(255) NOT NULL DEFAULT '',
-   description VARCHAR(255) NOT NULL DEFAULT '',
-   category_id INT,
-   PRIMARY KEY (id),
-   UNIQUE KEY title_author (title, author)
+                       id INT NOT NULL AUTO_INCREMENT,
+                       title VARCHAR(255) NOT NULL,
+                       author VARCHAR(255) NOT NULL,
+                       publisher VARCHAR(255) NOT NULL DEFAULT '',
+                       description VARCHAR(255) NOT NULL DEFAULT '',
+                       category_id INT,
+                       current INT NOT NULL DEFAULT 0,
+                       PRIMARY KEY (id),
+                       UNIQUE KEY title_author (title, author)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 CREATE TABLE rent_data (
    rented BIT(1) DEFAULT NULL,
