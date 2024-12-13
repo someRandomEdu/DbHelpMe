@@ -1,5 +1,6 @@
 package library;
 
+import library.entity.Account;
 import library.entity.Book;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,15 +22,13 @@ public final class RentDataController {
         this.accountService = accountService;
     }
 
-
-
     @GetMapping("/find-all-rented-books")
     public List<Book> findAllRentedBooks(@RequestBody Account account) {
         return findAllRentedBooksByAccountId(account.getId());
     }
 
     @GetMapping("/find-all-rented-books-by-account-id")
-    public List<Book> findAllRentedBooksByAccountId(Long accountId) {
+    public List<Book> findAllRentedBooksByAccountId(Integer accountId) {
         List<Book> books = bookService.findAll();
         var result = new ArrayList<Book>();
 
@@ -52,7 +51,7 @@ public final class RentDataController {
     }
 
     @GetMapping("/is-rented")
-    public boolean isRented(Long accountId, Long bookId) {
+    public boolean isRented(Integer accountId, Integer bookId) {
         List<RentData> list = service.findAllBy((rentData) ->
             rentData.getAccountId().equals(accountId) && rentData.getBookId().equals(bookId));
 
@@ -67,7 +66,7 @@ public final class RentDataController {
     }
 
     @GetMapping("/borrow-to")
-    public LocalDate getBorrowTo(@RequestParam Long bookId, @RequestParam Long accountId) {
+    public LocalDate getBorrowTo(@RequestParam Integer bookId, @RequestParam Integer accountId) {
         return service.getBorrowTo(bookId, accountId);
     }
 }

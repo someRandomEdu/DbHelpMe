@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public final class BookService extends JpaService<Book, Long> {
+public final class BookService extends JpaService<Book, Integer> {
 
 
-    public BookService(JpaRepository<Book, Long> repository) {
+    public BookService(JpaRepository<Book, Integer> repository) {
         super(repository);
     }
 

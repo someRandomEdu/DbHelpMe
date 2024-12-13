@@ -1,4 +1,4 @@
-package library;
+package library.entity;
 
 import jakarta.persistence.*;
 
@@ -9,10 +9,9 @@ import java.util.Objects;
 @Entity
 @Table(name = "accounts")
 public final class Account {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // Giữ id là Long
+    private Integer id; // NOTE: Changing from Long to Integer is a breaking change!
 
     private String username;
     private String password;
@@ -36,14 +35,14 @@ public final class Account {
         // Constructor không tham số
     }
 
-    public Account(Long id, String username, String password, Boolean isAdmin) {
+    public Account(Integer id, String username, String password, Boolean isAdmin) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.isAdmin = isAdmin;
     }
 
-    public Account(Long id, String username, String password, Boolean isAdmin, String email, String phoneNumber, LocalDate dateOfBirth) {
+    public Account(Integer id, String username, String password, Boolean isAdmin, String email, String phoneNumber, LocalDate dateOfBirth) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -53,7 +52,7 @@ public final class Account {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Account(Long id, String userFullName, String username, String password, Boolean isAdmin, String email, String phoneNumber, LocalDate dateOfBirth) {
+    public Account(Integer id, String userFullName, String username, String password, Boolean isAdmin, String email, String phoneNumber, LocalDate dateOfBirth) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -64,11 +63,11 @@ public final class Account {
         this.userFullName = userFullName;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

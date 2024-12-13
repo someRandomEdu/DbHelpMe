@@ -16,7 +16,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.button.Button;
 
 import com.vaadin.flow.component.textfield.TextField;
-import library.Account;
+import library.entity.Account;
 import library.AppController;
 import library.entity.CurrentUser;
 import org.springframework.http.HttpStatus;

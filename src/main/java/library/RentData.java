@@ -12,13 +12,13 @@ import java.util.Objects;
 public final class RentData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "account_id")
-    private Long accountId;
+    private Integer accountId;
 
     @Column(name = "book_id")
-    private Long bookId;
+    private Integer bookId;
 
     @Column(name = "status")
     private String status;
@@ -35,14 +35,14 @@ public final class RentData {
 
     }
 
-    public RentData(Long id, Long accountId, Long bookId, Boolean rented) {
+    public RentData(Integer id, Integer accountId, Integer bookId, Boolean rented) {
         this.id = id;
         this.accountId = accountId;
         this.bookId = bookId;
         this.rented = rented;
     }
 
-    public RentData(Long id, Long accountId, Long bookId, Boolean rented, String status, LocalDate borrowFrom, LocalDate borrowTo) {
+    public RentData(Integer id, Integer accountId, Integer bookId, Boolean rented, String status, LocalDate borrowFrom, LocalDate borrowTo) {
         this.id = id;
         this.accountId = accountId;
         this.bookId = bookId;
@@ -52,27 +52,27 @@ public final class RentData {
         this.borrowTo = borrowTo;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Long getAccountId() {
+    public Integer getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Long accountId) {
+    public void setAccountId(Integer accountId) {
         this.accountId = accountId;
     }
 
-    public Long getBookId() {
+    public Integer getBookId() {
         return bookId;
     }
 
-    public void setBookId(Long bookId) {
+    public void setBookId(Integer bookId) {
         this.bookId = bookId;
     }
 

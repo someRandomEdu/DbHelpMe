@@ -1,6 +1,5 @@
 package library.views;
 
-import com.beust.ah.A;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -18,23 +17,18 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.Route;
 import library.*;
+import library.entity.Account;
 import library.entity.Book;
 
 import com.vaadin.flow.component.button.Button;
-import library.entity.CurrentUser;
-import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
 import org.springframework.http.HttpStatus;
 
-import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

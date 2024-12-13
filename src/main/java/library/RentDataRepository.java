@@ -8,8 +8,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface RentDataRepository extends JpaRepository<RentData, Long> {
-    Optional<RentData> findByBookIdAndAccountId(Long bookId, Long accountId);
-    List<RentData> findAllByBookIdAndAccountId(Long bookId, Long accountId);
-    boolean existsByAccountIdAndBookId(Long accountId, Long bookId);
+public interface RentDataRepository extends JpaRepository<RentData, Integer> {
+    Optional<RentData> findByBookIdAndAccountId(Integer bookId, Integer accountId);
+    List<RentData> findAllByBookIdAndAccountId(Integer bookId, Integer accountId);
+    boolean existsByAccountIdAndBookId(Integer accountId, Integer bookId);
 }

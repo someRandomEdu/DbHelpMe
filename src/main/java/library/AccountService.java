@@ -1,5 +1,6 @@
 package library;
 
+import library.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -7,8 +8,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public final class AccountService extends JpaService<Account, Long> {
-    public AccountService(JpaRepository<Account, Long> repository) {
+public final class AccountService extends JpaService<Account, Integer> {
+    public AccountService(JpaRepository<Account, Integer> repository) {
         super(repository);
     }
 
