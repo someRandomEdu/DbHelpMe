@@ -130,7 +130,7 @@ public class Borrowed extends VerticalLayout {
                 })).setHeader("");
 
 
-        List<RentData> data = rentDataRepository.findAll();
+        List<RentData> data = rentDataRepository.findAllByAccountId(CurrentUser.getId());
 
         grid.setItems(data);
 

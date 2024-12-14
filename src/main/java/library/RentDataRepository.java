@@ -12,4 +12,5 @@ public interface RentDataRepository extends JpaRepository<RentData, Integer> {
     Optional<RentData> findByBookIdAndAccountId(Integer bookId, Integer accountId);
     List<RentData> findAllByBookIdAndAccountId(Integer bookId, Integer accountId);
     boolean existsByAccountIdAndBookId(Integer accountId, Integer bookId);
+    List<RentData> findAllByAccountId(Integer accountId);
 }
