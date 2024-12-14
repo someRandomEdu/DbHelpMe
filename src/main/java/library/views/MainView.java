@@ -77,6 +77,8 @@ public class MainView extends AppLayout implements RouterLayout {
 //                VaadinIcon.ARROW_FORWARD.create()));
         sideNav.addItem(new SideNavItem("Borrowed List", "/borrowedTab",
                 VaadinIcon.LIST_OL.create()));
+        sideNav.addItem(new SideNavItem("WishList", "/wishlist",
+                VaadinIcon.BOOKMARK_O.create()));
         sideNav.addItem(new SideNavItem("Account", "",
                 VaadinIcon.USER.create()));
         sideNav.addItem(new SideNavItem("Feedback", "/feedback",
