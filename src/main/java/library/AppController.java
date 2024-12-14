@@ -216,6 +216,11 @@ public final class AppController {
 
                         returnDataService.save(returnData);
                         rentDataService.delete(rd.get());
+
+                        Book book = bk.get();
+                        book.setCurrent(book.getCurrent() + 1);
+                        bookService.save(book);
+
                         return new ResponseEntity<>("Book successfully returned!", HttpStatus.OK);
                     } else {
                         return new ResponseEntity<>("Book is not rented!", HttpStatus.ALREADY_REPORTED);
