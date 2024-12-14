@@ -7,6 +7,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import library.entity.CurrentUser;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class Returned extends VerticalLayout {
 
         grid = new Grid<>(ReturnData.class);
         grid.setColumns("bookId", "borrowDate", "returnDate");
-        List<ReturnData> data = returnDataRepository.findAll();
+        List<ReturnData> data = returnDataRepository.findAllReturnByAccountId(CurrentUser.getId());
 
         grid.setItems(data);
         setAlignItems(Alignment.CENTER);
