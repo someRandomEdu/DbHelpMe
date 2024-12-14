@@ -105,9 +105,16 @@ public class UserBookListView extends VerticalLayout {
                         button.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
 
                         button.addClickListener(event -> {
-                            Dialog dialog = createBorrowDialog(books.getTitle(), books.getAuthor());
+                            Integer cur = books.getCurrent();
+                            if(cur == 0) {
+//                                Dialog dialog = createWhisListDialog(books.getTitle(), books.getAuthor());
+//
+//                                dialog.open();
+                            } else {
+                                Dialog dialog = createBorrowDialog(books.getTitle(), books.getAuthor());
 
-                            dialog.open();
+                                dialog.open();
+                            }
                         });
                     }
                 })).setHeader("Status");

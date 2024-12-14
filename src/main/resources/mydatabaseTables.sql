@@ -77,6 +77,16 @@ create table rent_report(
     to_date date -- not null if rent, null if return?
 );
 
+CREATE TABLE wishlist (
+                          id INT AUTO_INCREMENT PRIMARY KEY,
+                          user_id INT NOT NULL,
+                          book_id INT NOT NULL,
+                          added_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+                          FOREIGN KEY (user_id) REFERENCES accounts(id) ON DELETE CASCADE,
+                          FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                          UNIQUE KEY (user_id, book_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 INSERT INTO accounts (is_admin, password, username,userFullname,phone_number, date_of_birth,email)
 VALUES (b'1', 'admin', 'admin','Vũ Nguyễn Trường Minh','088888','2005-11-14','vutruongminh6d@gmail.com');
 
