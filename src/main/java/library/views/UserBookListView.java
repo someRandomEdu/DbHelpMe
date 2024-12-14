@@ -25,8 +25,14 @@ import library.entity.Account;
 import library.entity.Book;
 
 import com.vaadin.flow.component.button.Button;
+import library.entity.CurrentUser;
 import org.springframework.http.HttpStatus;
 
+import java.awt.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -107,9 +113,9 @@ public class UserBookListView extends VerticalLayout {
                         button.addClickListener(event -> {
                             Integer cur = books.getCurrent();
                             if(cur == 0) {
-//                                Dialog dialog = createWhisListDialog(books.getTitle(), books.getAuthor());
-//
-//                                dialog.open();
+                                Dialog dialog = createWishListDialog(CurrentUser.getId(), books.getId(), books.getTitle(), books.getAuthor());
+
+                                dialog.open();
                             } else {
                                 Dialog dialog = createBorrowDialog(books.getTitle(), books.getAuthor());
 
@@ -166,7 +172,62 @@ public class UserBookListView extends VerticalLayout {
         add(dialog);
     }
 
+    private Dialog  createWishListDialog(Integer userId, Integer BookId, String bookTitle, String bookAuthor) {
+        TextField titleField = new TextField("Book Title");
+        titleField.setValue(bookTitle);
+        titleField.setReadOnly(true);
 
+        TextField authorField = new TextField("Author");
+        authorField.setValue(bookAuthor);
+        authorField.setReadOnly(true);
+
+
+        Button AddButton = new Button("Add to WishList");
+        Button closeButton = new Button("Close");
+
+        NativeLabel error = new NativeLabel("Do you want to add to WishList?");
+
+        AddButton.addClickListener(event -> {
+            boolean success = addToWishlist(userId, BookId);
+
+            if (success) {
+                Notification.show("The book has been added to your wishlist!", 3000, Notification.Position.MIDDLE);
+            } else {
+                Notification.show("Failed to add the book to the wishlist. Please try again.", 3000, Notification.Position.MIDDLE);
+            }
+
+            event.getSource().getUI().ifPresent(ui -> {
+                ui.getChildren().filter(child -> child instanceof Dialog)
+                        .findFirst().ifPresent(dialog -> {
+                            ((Dialog) dialog).close();
+                        });
+            });
+        });
+
+        closeButton.addClickListener(event -> {
+            event.getSource().getUI().ifPresent(ui -> {
+                ui.getChildren().filter(child -> child instanceof Dialog)
+                        .findFirst().ifPresent(dialog -> {
+                            ((Dialog) dialog).close();
+                        });
+            });
+        });
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(AddButton, closeButton);
+        buttonsLayout.setSpacing(true);
+
+        VerticalLayout dialogLayout = new VerticalLayout();
+        dialogLayout.add(error, titleField, authorField, buttonsLayout);
+        dialogLayout.setPadding(false);
+        dialogLayout.setSpacing(false);
+        dialogLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
+        dialogLayout.getStyle().set("width", "18rem").set("max-width", "100%");
+
+        Dialog dialog = new Dialog(dialogLayout);
+        dialog.setHeaderTitle("Book is currently unavailable!");
+
+        return dialog;
+    }
     private Dialog createBorrowDialog(String bookTitle, String bookAuthor) {
         TextField titleField = new TextField("Book Title");
         titleField.setValue(bookTitle);
@@ -229,7 +290,7 @@ public class UserBookListView extends VerticalLayout {
         HorizontalLayout buttonsLayout = new HorizontalLayout(submitButton, closeButton);
         buttonsLayout.setSpacing(true);
 
-        VerticalLayout dialogLayout = new VerticalLayout(titleField, returnDateField, buttonsLayout);
+        VerticalLayout dialogLayout = new VerticalLayout(titleField, authorField, returnDateField, buttonsLayout);
         dialogLayout.setPadding(false);
         dialogLayout.setSpacing(false);
         dialogLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
@@ -340,4 +401,25 @@ public class UserBookListView extends VerticalLayout {
         return days;
     }
 
+    public boolean addToWishlist(Integer userId, Integer bookId) {
+        String URL = "jdbc:mysql://localhost:3306/mydatabase";
+        String USERNAME = "root";
+        String PASSWORD = "130405";
+
+        String query = "INSERT INTO wishlist (user_id, book_id) VALUES (?, ?)";
+
+        try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, userId);
+            statement.setInt(2, bookId);
+
+            int rowsAffected = statement.executeUpdate();
+
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
