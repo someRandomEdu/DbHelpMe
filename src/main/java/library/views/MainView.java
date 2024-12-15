@@ -3,6 +3,7 @@ package library.views;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -10,19 +11,27 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.popover.Popover;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLayout;
+import com.vaadin.flow.theme.lumo.LumoIcon;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import library.AppController;
 import library.entity.CurrentUser;
+import com.vaadin.flow.component.button.Button;
+
+
+import java.awt.*;
 
 import static library.views.LoginView.getUserName;
 
 @Route("main")
 public class MainView extends AppLayout implements RouterLayout {
-    public MainView(AppController appController) {
+    private NotificationPanel notificationPanel;
+    public MainView(AppController appController, NotificationPanel notificationPanel) {
+        this.notificationPanel = notificationPanel;
         DrawerToggle toggle = new DrawerToggle();
 
         H1 appTitle = new H1("Menu");
@@ -43,11 +52,21 @@ public class MainView extends AppLayout implements RouterLayout {
         viewTitle.getStyle().set("font-size", "var(--lumo-font-size-l)")
                 .set("margin", "0");
 
+        Button notiButton = new Button(LumoIcon.BELL.create());
+        notiButton.addThemeVariants(ButtonVariant.LUMO_ICON);
+        notiButton.setAriaLabel("Notifications");
+
+        Popover popover = notificationPanel.getPopover(notiButton);
+        notiButton.addClickListener(event -> {
+            popover.open();
+        });
+
         Scroller scroller = new Scroller(nav);
         scroller.setClassName(LumoUtility.Padding.SMALL);
 
-        HorizontalLayout wrapper = new HorizontalLayout(toggle, viewTitle);
+        HorizontalLayout wrapper = new HorizontalLayout(toggle, viewTitle, notiButton);
         wrapper.setAlignItems(FlexComponent.Alignment.CENTER);
+        notiButton.getStyle().set("margin-right", "var(--lumo-space-m)");
         wrapper.setSpacing(false);
 
         VerticalLayout viewHeader = new VerticalLayout(wrapper);
