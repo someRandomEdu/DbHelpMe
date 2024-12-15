@@ -1,9 +1,15 @@
 package library.entity;
 
 import jakarta.persistence.*;
+import library.helper.DatabaseHelper;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 @Entity
 @Table(name = "books")
@@ -20,7 +26,6 @@ public final class Book {
     private Integer current;
 
     public Book() {
-
     }
 
     public Book(Integer id, String title, String author, String publisher, String description, Integer categoryId, Integer current) {
@@ -101,7 +106,33 @@ public final class Book {
 
     @Override
     public String toString() {
-        return MessageFormat.format("Book[id = {0}, title = {1}, author = {2}, publisher = {3}, description = {4}]",
-            id, title, author, publisher, description);
+        return String.format("Book[id = %d, title = %s, author = %s, publisher = %s, description = %s]",
+                id, title, author, publisher, description);
+    }
+
+    // Thực hiện truy vấn để lấy tất cả tên tác giả của cuốn sách
+    public String getAllAuthors() {
+        String query = "SELECT a.author_name " +
+                "FROM authors a " +
+                "JOIN book_author ba ON a.author_id = ba.author_id " +
+                "WHERE ba.book_id = ?";
+
+        // Sử dụng StringJoiner để nối các tác giả
+        StringJoiner authorNames = new StringJoiner(", ");
+
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, id);  // Sử dụng setInt thay vì setLong vì id là Integer
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                authorNames.add(rs.getString("author_name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return authorNames.toString();
     }
 }
