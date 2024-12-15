@@ -26,6 +26,7 @@ import library.entity.Book;
 
 import com.vaadin.flow.component.button.Button;
 import library.entity.CurrentUser;
+import library.helper.DatabaseHelper;
 import org.springframework.http.HttpStatus;
 
 import java.awt.*;
@@ -77,7 +78,32 @@ public class UserBookListView extends VerticalLayout {
                 .set("text-align", "center")
                 .set("margin-bottom", "20px");
 
-        availableBookGrid.setColumns("id", "title", "author", "publisher", "categoryId");
+        availableBookGrid.removeAllColumns();
+
+        availableBookGrid.addColumn(Book::getId)
+                .setHeader("ID")
+                .setWidth("80px")
+                .setFlexGrow(0);
+
+        availableBookGrid.addColumn(Book::getTitle)
+                .setHeader("Title")
+                .setWidth("250px")
+                .setFlexGrow(0);
+
+        availableBookGrid.addColumn(Book::getAllAuthors)
+                .setHeader("Authors")
+                .setWidth("250px")
+                .setFlexGrow(0);
+
+        availableBookGrid.addColumn(Book::getPublisher)
+                .setHeader("Publisher")
+                .setWidth("150px")
+                .setFlexGrow(0);
+
+        availableBookGrid.addColumn(Book::getCategoryId)
+                .setHeader("Category ID")
+                .setWidth("150px")
+                .setFlexGrow(0);
 
         availableBookGrid.addColumn(
                 new ComponentRenderer<>(Button::new, (button, books) -> {
@@ -402,13 +428,10 @@ public class UserBookListView extends VerticalLayout {
     }
 
     public boolean addToWishlist(Integer userId, Integer bookId) {
-        String URL = "jdbc:mysql://localhost:3306/mydatabase";
-        String USERNAME = "root";
-        String PASSWORD = "130405";
 
         String query = "INSERT INTO wishlist (user_id, book_id) VALUES (?, ?)";
 
-        try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        try (Connection connection = DatabaseHelper.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setInt(1, userId);
