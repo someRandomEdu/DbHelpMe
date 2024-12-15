@@ -10,24 +10,27 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.TabsVariant;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.function.SerializableSupplier;
-import library.AppController;
-import library.BookRepository;
-import library.RentDataRepository;
-import library.ReturnDataRepository;
+import library.*;
+import org.checkerframework.checker.units.qual.N;
 
 @Route(value = "borrowedTab", layout = MainView.class)
 public class BorrowedTab extends VerticalLayout {
     private final RentDataRepository rentDataRepository;
+    private NotificationsRepository notificationsRepository;
     private ReturnDataRepository returnDataRepository;
     private final AppController appController;
     private final BookRepository bookRepository;
+    private final WishListRepository wishListRepository;
+    private final NotificationsService notificationsService;
 
-
-    public BorrowedTab(AppController appController, RentDataRepository rentDataRepository, ReturnDataRepository returnDataRepository, BookRepository bookRepository ) {
+    public BorrowedTab(AppController appController, RentDataRepository rentDataRepository, ReturnDataRepository returnDataRepository, BookRepository bookRepository, WishListRepository wishListRepository, NotificationsRepository notificationsRepository, NotificationsService notificationsService) {
         this.appController = appController;
         this.rentDataRepository = rentDataRepository;
         this.returnDataRepository = returnDataRepository;
         this.bookRepository = bookRepository;
+        this.wishListRepository = wishListRepository;
+        this.notificationsRepository = notificationsRepository;
+        this.notificationsService = notificationsService;
         Tab borrowedTab = new Tab("Borrowed");
         Tab returnedTab = new Tab("Returned");
 
@@ -35,7 +38,7 @@ public class BorrowedTab extends VerticalLayout {
 
         tabSheet.addThemeVariants(TabsVariant.LUMO_EQUAL_WIDTH_TABS);
 
-        LazyComponent borrowedTabContent = new LazyComponent(() -> new Borrowed(appController, bookRepository, rentDataRepository));
+        LazyComponent borrowedTabContent = new LazyComponent(() -> new Borrowed(appController, bookRepository, rentDataRepository, wishListRepository, notificationsRepository, notificationsService));
         LazyComponent returnedTabContent = new LazyComponent(() -> new Returned(returnDataRepository));
 
         tabSheet.addSelectedChangeListener(event -> {
@@ -60,6 +63,7 @@ public class BorrowedTab extends VerticalLayout {
         tabSheet.setHeight("50px");
         borrowedTabContent.setSizeFull();
         returnedTabContent.setSizeFull();
+        this.notificationsRepository = notificationsRepository;
     }
 }
 

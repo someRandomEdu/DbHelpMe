@@ -29,10 +29,11 @@ import java.util.Optional;
 import library.*;
 import library.entity.Book;
 import library.entity.CurrentUser;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
 
-import static library.entity.CurrentUser.getPassword;
-import static library.entity.CurrentUser.getUsername;
+import static library.entity.CurrentUser.*;
 import static library.views.LoginView.getUserName;
 
 @Route(value = "/app/borrowed", layout = MainView.class)
@@ -40,11 +41,17 @@ public class Borrowed extends VerticalLayout {
     private final RentDataRepository rentDataRepository;
     private final AppController appController;
     private final BookRepository bookRepository;
+    private final WishListRepository wishListRepository;
+    private final NotificationsRepository notificationsRepository;
+    private final NotificationsService notificationsService;
     private Grid<RentData> grid;
 
-    public Borrowed(AppController appController, BookRepository bookRepository, RentDataRepository rentDataRepository) {
+    public Borrowed(AppController appController, BookRepository bookRepository, RentDataRepository rentDataRepository, WishListRepository wishListRepository, NotificationsRepository notificationsRepository, NotificationsService notificationsService) {
         this.appController = appController;
         this.bookRepository = bookRepository;
+        this.wishListRepository = wishListRepository;
+        this.notificationsRepository = notificationsRepository;
+        this.notificationsService = notificationsService;
 
         Div titleLabel = new Div(new Text("Borrowed List"));
         titleLabel.addClassName("title-container");
@@ -79,16 +86,10 @@ public class Borrowed extends VerticalLayout {
                     button.setIcon(new Icon(VaadinIcon.REPLY));
                     button.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
-                    var bookId = rentData.getBookId();
+                    final Integer bookId = rentData.getBookId();
                     Optional<Book> bookOpt = bookRepository.findById(bookId);
-                    String bookTitle = "Book not found";
-                    String bookAuthor = "Author not found";
-
-                    if (bookOpt.isPresent()) {
-                        bookTitle = bookOpt.get().getTitle();
-                        bookAuthor = bookOpt.get().getAuthor();
-                    }
-
+                    final String bookTitle = bookOpt.map(Book::getTitle).orElse("Book not found");
+                    final String bookAuthor = bookOpt.map(Book::getAuthor).orElse("Author not found");
                     TextField titleField = new TextField();
                     titleField.setValue(bookTitle);
                     titleField.setReadOnly(true);
@@ -121,6 +122,17 @@ public class Borrowed extends VerticalLayout {
                         }
 
                         notification.open();
+
+                        List<WishList> wishlist = wishListRepository.findAllWishByBookId(bookId);
+
+                        if(!wishlist.isEmpty()) {
+                            WishList firstUser = wishlist.get(0);
+                            Integer userId = firstUser.getUserId();
+                            String message = "The book " + bookTitle + " is now available, do you want to borrow?";
+                            notificationsService.saveNotification(userId, "wishlist", message);
+
+                            wishListRepository.delete(firstUser);
+                        }
 
                         UI.getCurrent().access(() -> {
                             UI.getCurrent().getPage().executeJs("setTimeout(() => { window.location.href = '/borrowedTab'; }, 1000);");
