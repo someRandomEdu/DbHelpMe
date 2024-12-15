@@ -91,12 +91,14 @@ CREATE TABLE notifications (
                                id INT NOT NULL AUTO_INCREMENT,
                                user_id INT NOT NULL,
                                message TEXT NOT NULL,
+                               type VARCHAR(50) NOT NULL DEFAULT 'general',
                                status VARCHAR(20) DEFAULT 'unread',
                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                PRIMARY KEY (id),
                                FOREIGN KEY (user_id) REFERENCES accounts(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 INSERT INTO accounts (is_admin, password, username,userFullname,phone_number, date_of_birth,email)
 VALUES (b'1', 'admin', 'admin','Vũ Nguyễn Trường Minh','088888','2005-11-14','vutruongminh6d@gmail.com');
