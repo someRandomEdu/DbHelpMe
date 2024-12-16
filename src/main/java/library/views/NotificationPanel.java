@@ -43,6 +43,7 @@ import library.BookRepository;
 import library.Notifications;
 import library.NotificationsRepository;
 import library.entity.Book;
+import library.helper.DatabaseHelper;
 import org.bouncycastle.crypto.prng.drbg.DualECPoints;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -93,11 +94,7 @@ public class NotificationPanel extends Div {
         heading.getStyle().set("margin", "0");
 
         Button markRead = new Button("Mark all read", (e) -> {
-            final String URL = "jdbc:mysql://localhost:3306/mydatabase";
-            final String USERNAME = "root";
-            final String PASSWORD = "130405";
-
-            try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
+           try (Connection connection = DatabaseHelper.getConnection()) {
                 String sql = "UPDATE notifications SET status = 'read' WHERE status = 'unread'";
                 try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                     int rowsAffected = preparedStatement.executeUpdate();

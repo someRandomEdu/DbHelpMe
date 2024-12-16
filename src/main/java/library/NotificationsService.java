@@ -1,6 +1,7 @@
 package library;
 
 import io.swagger.v3.oas.annotations.servers.Server;
+import library.helper.DatabaseHelper;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -10,16 +11,12 @@ import java.sql.SQLException;
 
 @Service
 public class NotificationsService {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/mydatabase";
-    private static final String DB_USER = "root";  //
-    private static final String DB_PASSWORD = "130405";
-
     public void saveNotification(int userId, String type, String message) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
 
         try {
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            connection = DatabaseHelper.getConnection();
 
             String sql = "INSERT INTO notifications (user_id, type, message, status) VALUES (?, ?, ?, 'unread')";
 
