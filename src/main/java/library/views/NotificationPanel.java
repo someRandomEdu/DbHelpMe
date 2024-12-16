@@ -70,6 +70,7 @@ public class NotificationPanel extends Div {
         Popover popover = new Popover();
         popover.setTarget(button);
         popover.setWidth("300px");
+        popover.setHeight("300px");
         popover.addThemeVariants(PopoverVariant.ARROW,
                 PopoverVariant.LUMO_NO_PADDING);
         popover.setPosition(PopoverPosition.BOTTOM);
@@ -78,9 +79,8 @@ public class NotificationPanel extends Div {
         List<Notifications> unreadList = notificationsRepository.findByUserIdAndStatusOrderByCreatedAtDesc(userId, "unread");
         List<Notifications> allList = notificationsRepository.findByUserIdOrderByCreatedAtDesc(userId);
 
-        // Tạo danh sách thông báo có thể click
-        Div unreadContent = createClickableNotificationList(unreadList);
-        Div allContent = createClickableNotificationList(allList);
+        Div unreadContent = createClickableNotificationList(unreadList, "No unread notifications");
+        Div allContent = createClickableNotificationList(allList, "No notifications");
 
         TabSheet tabSheet = new TabSheet();
         tabSheet.addThemeVariants(TabSheetVariant.LUMO_TABS_SMALL, TabSheetVariant.LUMO_NO_PADDING);
@@ -129,25 +129,31 @@ public class NotificationPanel extends Div {
                 .toInstant(ZoneOffset.UTC);
     }
 
-    private Div createClickableNotificationList(List<Notifications> notifications) {
+    private Div createClickableNotificationList(List<Notifications> notifications, String emptyMessage) {
         Div container = new Div();
 
-        notifications.forEach(notification -> {
-            Div notificationItem = new Div();
-            notificationItem.setText(notification.getMessage());
-            notificationItem.addClassName("notification-item");
+        if (notifications.isEmpty()) {
+            container.add(new Div(emptyMessage) {{
+                this.addClassName("no-notifications-msg");
+            }});
+        } else {
+            notifications.forEach(notification -> {
+                Div notificationItem = new Div();
+                notificationItem.setText(notification.getMessage());
+                notificationItem.addClassName("notification-item");
 
-            notificationItem.addClickListener(event -> {
-                if(notification.getType().equals("wishlist")) {
-                    showBorrowDialog(notification, bookRepository);
+                notificationItem.addClickListener(event -> {
+                    if (notification.getType().equals("wishlist")) {
+                        showBorrowDialog(notification, bookRepository);
 //                    System.out.println(notification.getType());
-                } else {
-                    showNotificationDialog(notification);
-                }
-            });
+                    } else {
+                        showNotificationDialog(notification);
+                    }
+                });
 
-            container.add(notificationItem);
-        });
+                container.add(notificationItem);
+            });
+        }
 
         return container;
     }
