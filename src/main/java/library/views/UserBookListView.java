@@ -1,8 +1,10 @@
 package library.views;
 
+import com.beust.ah.A;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
@@ -16,6 +18,8 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -30,16 +34,15 @@ import library.helper.DatabaseHelper;
 import org.springframework.http.HttpStatus;
 
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import static library.entity.Book.getCategoriesList;
 import static library.entity.CurrentUser.getPassword;
 import static library.entity.CurrentUser.getUsername;
 import static library.views.LoginView.getUserName;
@@ -100,7 +103,7 @@ public class UserBookListView extends VerticalLayout {
                 .setWidth("150px")
                 .setFlexGrow(0);
 
-        availableBookGrid.addColumn(Book::getCategoryId)
+        availableBookGrid.addColumn(Book::getCategoriesString)
                 .setHeader("Category ID")
                 .setWidth("150px")
                 .setFlexGrow(0);
@@ -183,7 +186,14 @@ public class UserBookListView extends VerticalLayout {
 
             availableBookGrid.getDataProvider().refreshAll();
         });
-        add(titleLabel, searchField, pagination.getLayout(), availableBookGrid);
+
+        Button addBookButton = new Button("Add book");
+        addBookButton.addClickListener(event-> {
+           addBookdialog();
+        });
+        add(titleLabel, searchField);
+        if(CurrentUser.isAdmin()) add(addBookButton);
+        add(pagination.getLayout(), availableBookGrid);
 
     }
 
@@ -443,6 +453,153 @@ public class UserBookListView extends VerticalLayout {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private void addBookdialog() {
+        TextField titleField = new TextField("Book Title");
+        TextField authorField = new TextField("Author");
+        TextField publisherField = new TextField("Publisher");
+        TextArea descriptionField = new TextArea("description");
+
+        MultiSelectComboBox<String> comboBox = new MultiSelectComboBox<>("Categories");
+        List<String> categories = getCategoriesList();
+        comboBox.setItems(categories);
+
+        NumberField quantityField = new NumberField("Quantity");
+        Button AddButton = new Button("Add book");
+        Button closeButton = new Button("Cancel");
+
+        AddButton.addClickListener(event-> {
+            String title = titleField.getValue();
+            String author = authorField.getValue();
+            String publisher = publisherField.getValue();
+            String description = descriptionField.getValue();
+            Integer quantity = quantityField.getValue().intValue();
+            Set<String> selectedCategories = comboBox.getSelectedItems();
+            addNewBookToDatabase(title, author, publisher, description, selectedCategories, quantity);
+        });
+
+        closeButton.addClickListener(event -> {
+            event.getSource().getUI().ifPresent(ui -> {
+                ui.getChildren().filter(child -> child instanceof Dialog)
+                        .findFirst().ifPresent(dialog -> {
+                            ((Dialog) dialog).close();
+                        });
+            });
+        });
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(AddButton, closeButton);
+        buttonsLayout.setSpacing(true);
+
+        VerticalLayout dialogLayout = new VerticalLayout();
+        dialogLayout.add(titleField, authorField, publisherField, descriptionField, comboBox, quantityField, buttonsLayout);
+        dialogLayout.setPadding(false);
+        dialogLayout.setSpacing(false);
+        dialogLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
+        dialogLayout.getStyle().set("width", "18rem").set("max-width", "100%");
+
+        Dialog dialog = new Dialog(dialogLayout);
+        dialog.setHeaderTitle("ADD BOOK");
+
+        dialog.open();
+    }
+
+    private void addNewBookToDatabase(String title, String author, String publisher, String description, Set<String> selectedCategories, Integer quantity) {
+        try (Connection connection = DatabaseHelper.getConnection()) {
+            connection.setAutoCommit(false);
+
+            String checkBookSql = "SELECT COUNT(*) FROM books WHERE title = ?";
+            try (PreparedStatement checkBookStmt = connection.prepareStatement(checkBookSql)) {
+                checkBookStmt.setString(1, title);
+                ResultSet bookCheckResult = checkBookStmt.executeQuery();
+                bookCheckResult.next();
+                if (bookCheckResult.getInt(1) > 0) {
+                    Notification.show("Book title already exists!", 5000, Notification.Position.MIDDLE);
+                    return;
+                }
+            }
+
+            String insertBookSql = "INSERT INTO books (title, publisher, description, quantity) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement bookStmt = connection.prepareStatement(insertBookSql, Statement.RETURN_GENERATED_KEYS)) {
+                bookStmt.setString(1, title);
+                bookStmt.setString(2, publisher);
+                bookStmt.setString(3, description);
+                bookStmt.setInt(4, quantity);
+                bookStmt.executeUpdate();
+
+                ResultSet generatedKeys = bookStmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int bookId = generatedKeys.getInt(1);
+
+                    int authorId;
+                    String getAuthorIdSql = "SELECT author_id FROM authors WHERE author_name = ?";
+                    try (PreparedStatement getAuthorIdStmt = connection.prepareStatement(getAuthorIdSql)) {
+                        getAuthorIdStmt.setString(1, author);
+                        ResultSet authorResult = getAuthorIdStmt.executeQuery();
+                        if (authorResult.next()) {
+                            authorId = authorResult.getInt("author_id");
+                        } else {
+                            String insertAuthorSql = "INSERT INTO authors (author_name) VALUES (?)";
+                            try (PreparedStatement authorStmt = connection.prepareStatement(insertAuthorSql, Statement.RETURN_GENERATED_KEYS)) {
+                                authorStmt.setString(1, author);
+                                authorStmt.executeUpdate();
+                                ResultSet authorKeys = authorStmt.getGeneratedKeys();
+                                if (authorKeys.next()) {
+                                    authorId = authorKeys.getInt(1);
+                                } else {
+                                    throw new SQLException("Failed to insert new author and retrieve authorId.");
+                                }
+                            }
+                        }
+                    }
+
+                    String insertBookAuthorSql = "INSERT INTO book_author (book_id, author_id) VALUES (?, ?)";
+                    try (PreparedStatement bookAuthorStmt = connection.prepareStatement(insertBookAuthorSql)) {
+                        bookAuthorStmt.setInt(1, bookId);
+                        bookAuthorStmt.setInt(2, authorId);
+                        bookAuthorStmt.executeUpdate();
+                    }
+
+                    for (String category : selectedCategories) {
+                        String insertCategorySql = "INSERT IGNORE INTO categories (name) VALUES (?)";
+                        try (PreparedStatement categoryStmt = connection.prepareStatement(insertCategorySql, Statement.RETURN_GENERATED_KEYS)) {
+                            categoryStmt.setString(1, category);
+                            categoryStmt.executeUpdate();
+
+                            int categoryId;
+                            ResultSet categoryKeys = categoryStmt.getGeneratedKeys();
+                            if (categoryKeys.next()) {
+                                categoryId = categoryKeys.getInt(1);
+                            } else {
+                                String getCategoryIdSql = "SELECT id FROM categories WHERE name = ?";
+                                try (PreparedStatement getCategoryIdStmt = connection.prepareStatement(getCategoryIdSql)) {
+                                    getCategoryIdStmt.setString(1, category);
+                                    ResultSet categoryResult = getCategoryIdStmt.executeQuery();
+                                    categoryResult.next();
+                                    categoryId = categoryResult.getInt("id");
+                                }
+                            }
+
+                            String insertBookCategorySql = "INSERT INTO book_category (book_id, category_id) VALUES (?, ?)";
+                            try (PreparedStatement bookCategoryStmt = connection.prepareStatement(insertBookCategorySql)) {
+                                bookCategoryStmt.setInt(1, bookId);
+                                bookCategoryStmt.setInt(2, categoryId);
+                                bookCategoryStmt.executeUpdate();
+                            }
+                        }
+                    }
+                }
+
+                connection.commit();
+                Notification.show("Book added successfully!");
+            } catch (Exception e) {
+                connection.rollback();
+                e.printStackTrace();
+                Notification.show("Failed to add book!", 5000, Notification.Position.MIDDLE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

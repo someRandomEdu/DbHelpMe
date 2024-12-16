@@ -19,7 +19,6 @@ CREATE TABLE books (
    title VARCHAR(255) NOT NULL,
    publisher VARCHAR(255) NOT NULL DEFAULT '',
    description VARCHAR(255) NOT NULL DEFAULT '',
-   category_id INT,
     quantity INT NOT NULL DEFAULT 1,
    PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -155,3 +154,28 @@ INSERT INTO book_author (book_id, author_id) VALUES
 (8, 8), -- The Hobbit -> J.R.R. Tolkien
 (9, 9), -- The Alchemist -> Paulo Coelho
 (10, 10); -- The Book Thief -> Markus Zusak
+
+insert into book_author values(1, 2);
+insert into book_author values(1, 4);
+insert into book_author values(2, 3);
+insert into book_author values(3, 6);
+insert into book_author values(7, 1);
+insert into book_author values(8, 5);
+insert into book_author values(5, 2);
+insert into book_author values(4, 3);
+
+insert into categories values(1, "code");
+insert into categories values(2, "math");
+insert into categories values(3, "biology");
+insert into categories values(4, "literature");
+
+
+insert into book_category values(2, 2);
+insert into book_category values(3, 3);
+insert into book_category values(4, 4);
+insert into book_category values(5, 1);
+insert into book_category values(6, 2);
+insert into book_category values(7, 3);
+insert into book_category values(8, 4);
+insert into book_category values(9, 1);
+insert into book_category values(10, 2);

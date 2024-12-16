@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -29,22 +31,18 @@ public final class Book {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "category_id")
-    private Integer categoryId;
-
     @Column(name = "quantity")
     private Integer quantity;
 
     public Book() {
     }
 
-    public Book(Integer id, String title, String author, String publisher, String description, Integer categoryId, Integer quantity) {
+    public Book(Integer id, String title, String author, String publisher, String description, Integer quantity) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.description = description;
-        this.categoryId = categoryId;
         this.quantity = quantity;
     }
 
@@ -78,14 +76,6 @@ public final class Book {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Integer getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
     }
 
     public Integer getQuantity() {
@@ -125,7 +115,7 @@ public final class Book {
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, id);  // Sử dụng setInt thay vì setLong vì id là Integer
+            stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -136,5 +126,47 @@ public final class Book {
         }
 
         return authorNames.toString();
+    }
+
+    public static List<String> getCategoriesList() {
+        List<String> categories = new ArrayList<>();
+
+        String query = "SELECT name FROM categories";
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                categories.add(rs.getString("name"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return categories;
+    }
+
+    public String getCategoriesString() {
+        String query = "SELECT c.name " +
+                "FROM categories c " +
+                "JOIN book_category bc ON c.id = bc.category_id " +
+                "WHERE bc.book_id = ?";
+
+        StringJoiner categoriesName = new StringJoiner(", ");
+
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                categoriesName.add(rs.getString("name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return categoriesName.toString();
     }
 }
