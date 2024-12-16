@@ -5,19 +5,28 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.messages.MessageList;
 import com.vaadin.flow.component.messages.MessageListItem;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -26,22 +35,36 @@ import com.vaadin.flow.component.popover.PopoverPosition;
 import com.vaadin.flow.component.popover.PopoverVariant;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.tabs.TabSheetVariant;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.theme.lumo.LumoIcon;
 import com.vaadin.flow.router.Route;
 import library.AppController;
+import library.BookRepository;
 import library.Notifications;
 import library.NotificationsRepository;
+import library.entity.Book;
+import org.bouncycastle.crypto.prng.drbg.DualECPoints;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Component;
+
+import static library.entity.CurrentUser.getPassword;
+import static library.entity.CurrentUser.getUsername;
 
 @Route(value = "notification", layout = MainView.class)
 @Component
 public class NotificationPanel extends Div {
+    private final StringHttpMessageConverter stringHttpMessageConverter;
+    private BookRepository bookRepository;
     private NotificationsRepository notificationsRepository;
-    public NotificationPanel() {}
+    public NotificationPanel(StringHttpMessageConverter stringHttpMessageConverter) {
+        this.stringHttpMessageConverter = stringHttpMessageConverter;
+    }
     private AppController appController;
 
-    public Popover getPopover(Button button, Integer userId, NotificationsRepository notificationsRepository, AppController appController) {
+    public Popover getPopover(Button button, Integer userId, NotificationsRepository notificationsRepository, AppController appController, BookRepository bookRepository) {
         this.notificationsRepository = notificationsRepository;
+        this.bookRepository = bookRepository;
         this.appController = appController;
         Popover popover = new Popover();
         popover.setTarget(button);
@@ -117,9 +140,13 @@ public class NotificationPanel extends Div {
             notificationItem.setText(notification.getMessage());
             notificationItem.addClassName("notification-item");
 
-            // Thêm sự kiện click
             notificationItem.addClickListener(event -> {
-                showNotificationDialog(notification);
+                if(notification.getType().equals("wishlist")) {
+                    showBorrowDialog(notification, bookRepository);
+//                    System.out.println(notification.getType());
+                } else {
+                    showNotificationDialog(notification);
+                }
             });
 
             container.add(notificationItem);
@@ -130,15 +157,101 @@ public class NotificationPanel extends Div {
 
     private void showNotificationDialog(Notifications notification) {
         Dialog dialog = new Dialog();
-        dialog.setHeaderTitle("Chi tiết thông báo");
+        dialog.setHeaderTitle("Notification details");
 
         Div content = new Div();
         content.setText(notification.getMessage());
 
         dialog.add(content);
 
-        Button closeButton = new Button("Đóng", e -> dialog.close());
+        Button closeButton = new Button("Close", e -> dialog.close());
         dialog.getFooter().add(closeButton);
+
+        dialog.open();
+    }
+
+    private void showBorrowDialog(Notifications notification, BookRepository bookRepository) {
+        String message = notification.getMessage();
+        String st = "The book ";
+        String en = " is now available, do you want to borrow?";
+        int stM = message.indexOf(st) + st.length();
+        int enM = message.indexOf(en);
+
+        String bookTitle = message.substring(stM, enM);
+
+        Book book = bookRepository.findByTitle(bookTitle);
+
+        NativeLabel label = new NativeLabel("Do you want to borrow this book?");
+
+        TextField titleField = new TextField("Book Title");
+        titleField.setValue(bookTitle);
+        titleField.setReadOnly(true);
+
+        TextField authorField = new TextField("Author");
+        authorField.setValue(book.getAllAuthors());
+        authorField.setReadOnly(true);
+
+        DatePicker returnDateField = new DatePicker("Return Date");
+        Button submitButton = new Button("Submit");
+        Button closeButton = new Button("Close");
+
+        submitButton.addClickListener(e -> {
+            LocalDate returnDate = returnDateField.getValue();
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String returnDateString = returnDate.format(format);
+            String status = "borrowed";
+            var operationResult = appController.rentBook(Map.ofEntries(
+                    Map.entry("username", getUsername()),
+                    Map.entry("password", getPassword()),
+                    Map.entry("title", titleField.getValue()),
+                    Map.entry("author", authorField.getValue()),
+                    Map.entry("status", status),
+                    Map.entry("returnDate", returnDateString)
+            ));
+
+            var noti = new Notification();
+
+            var notificationLayout = new HorizontalLayout(new NativeLabel(operationResult.getBody()), new Button(
+                    new Icon("lumo", "cross"), evt -> {
+                noti.close();
+            }));
+
+            notificationLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+            noti.add(notificationLayout);
+
+            switch (operationResult.getStatusCode()) {
+                case HttpStatus.OK -> noti.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                case HttpStatus.ALREADY_REPORTED -> noti.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+                default -> noti.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+            noti.open();
+
+            UI.getCurrent().access(() -> {
+                UI.getCurrent().getPage().executeJs("setTimeout(() => { window.location.href = '/borrowedTab'; }, 1000);");
+            });
+        });
+
+
+        closeButton.addClickListener(event -> {
+            event.getSource().getUI().ifPresent(ui -> {
+                ui.getChildren().filter(child -> child instanceof Dialog)
+                        .findFirst().ifPresent(dialog -> {
+                            ((Dialog) dialog).close();
+                        });
+            });
+        });
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(submitButton, closeButton);
+        buttonsLayout.setSpacing(true);
+
+        VerticalLayout dialogLayout = new VerticalLayout(label, titleField, authorField, returnDateField, buttonsLayout);
+        dialogLayout.setPadding(false);
+        dialogLayout.setSpacing(false);
+        dialogLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
+        dialogLayout.getStyle().set("width", "18rem").set("max-width", "100%");
+
+        Dialog dialog = new Dialog(dialogLayout);
+        dialog.setHeaderTitle("Notification details");
 
         dialog.open();
     }

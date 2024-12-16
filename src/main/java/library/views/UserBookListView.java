@@ -137,13 +137,13 @@ public class UserBookListView extends VerticalLayout {
                         button.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
 
                         button.addClickListener(event -> {
-                            Integer cur = books.getCurrent();
+                            Integer cur = books.getQuantity();
                             if(cur == 0) {
-                                Dialog dialog = createWishListDialog(CurrentUser.getId(), books.getId(), books.getTitle(), books.getAuthor());
+                                Dialog dialog = createWishListDialog(CurrentUser.getId(), books.getId(), books.getTitle(), books.getAllAuthors());
 
                                 dialog.open();
                             } else {
-                                Dialog dialog = createBorrowDialog(books.getTitle(), books.getAuthor());
+                                Dialog dialog = createBorrowDialog(books.getTitle(), books.getAllAuthors());
 
                                 dialog.open();
                             }
@@ -172,7 +172,7 @@ public class UserBookListView extends VerticalLayout {
                         }
 
                         boolean matchesTitle = matchesTerm(book.getTitle(), searchRes);
-                        boolean matchesAuthor = matchesTerm(book.getAuthor(), searchRes);
+                        boolean matchesAuthor = matchesTerm(book.getAllAuthors(), searchRes);
 
                         return matchesTitle || matchesAuthor;
                     })

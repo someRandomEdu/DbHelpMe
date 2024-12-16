@@ -19,6 +19,7 @@ import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.theme.lumo.LumoIcon;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import library.AppController;
+import library.BookRepository;
 import library.NotificationsRepository;
 import library.entity.CurrentUser;
 import com.vaadin.flow.component.button.Button;
@@ -30,11 +31,13 @@ import static library.views.LoginView.getUserName;
 
 @Route("main")
 public class MainView extends AppLayout implements RouterLayout {
+    private final BookRepository bookRepository;
     private NotificationPanel notificationPanel;
     private NotificationsRepository notificationsRepository;
-    public MainView(AppController appController, NotificationPanel notificationPanel, NotificationsRepository notificationsRepository) {
+    public MainView(AppController appController, NotificationPanel notificationPanel, NotificationsRepository notificationsRepository, BookRepository bookRepository) {
         this.notificationsRepository = notificationsRepository;
         this.notificationPanel = notificationPanel;
+        this.bookRepository = bookRepository;
         DrawerToggle toggle = new DrawerToggle();
 
         H1 appTitle = new H1("Menu");
@@ -59,7 +62,7 @@ public class MainView extends AppLayout implements RouterLayout {
         notiButton.addThemeVariants(ButtonVariant.LUMO_ICON);
         notiButton.setAriaLabel("Notifications");
 
-        Popover popover = notificationPanel.getPopover(notiButton, CurrentUser.getId(), notificationsRepository, appController);
+        Popover popover = notificationPanel.getPopover(notiButton, CurrentUser.getId(), notificationsRepository, appController, bookRepository);
         notiButton.addClickListener(event -> {
             popover.open();
         });

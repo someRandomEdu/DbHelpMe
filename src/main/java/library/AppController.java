@@ -193,7 +193,7 @@ public final class AppController {
 
         if (acc.isPresent()) {
             var bk = bookService.findOneBy(value -> Objects.equals(value.getTitle(), map.get("title")) &&
-                    Objects.equals(value.getAuthor(), map.get("author")));
+                    value.getAllAuthors().contains(map.get("author")));
 
             if (bk.isPresent()) {
                 var rd = rentDataService.findOneBy(value ->
@@ -218,7 +218,7 @@ public final class AppController {
                         rentDataService.delete(rd.get());
 
                         Book book = bk.get();
-                        book.setCurrent(book.getCurrent() + 1);
+                        book.setQuantity(book.getQuantity() + 1);
                         bookService.save(book);
 
                         return new ResponseEntity<>("Book successfully returned!", HttpStatus.OK);
@@ -248,7 +248,7 @@ public final class AppController {
             if (Objects.equals(account.getPassword(), map.get("password"))) {
                 Optional<Book> bk = bookService.findOneBy(value ->
                         Objects.equals(value.getTitle(), map.get("title")) &&
-                                Objects.equals(value.getAuthor(), map.get("author"))
+                                value.getAllAuthors().contains(map.get("author"))
                 );
 
                 if (bk.isPresent()) {
@@ -263,8 +263,8 @@ public final class AppController {
                         return new ResponseEntity<>("Book already rented!", HttpStatus.ALREADY_REPORTED);
                     }
 
-                    if (book.getCurrent() > 0) {
-                        book.setCurrent(book.getCurrent() - 1);
+                    if (book.getQuantity() > 0) {
+                        book.setQuantity(book.getQuantity() - 1);
                         bookService.save(book);
 
                         String returnDateStr = map.get("returnDate");

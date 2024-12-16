@@ -89,7 +89,7 @@ public class Borrowed extends VerticalLayout {
                     final Integer bookId = rentData.getBookId();
                     Optional<Book> bookOpt = bookRepository.findById(bookId);
                     final String bookTitle = bookOpt.map(Book::getTitle).orElse("Book not found");
-                    final String bookAuthor = bookOpt.map(Book::getAuthor).orElse("Author not found");
+                    final String bookAuthor = bookOpt.map(Book::getAllAuthors).orElse("Author not found");
                     TextField titleField = new TextField();
                     titleField.setValue(bookTitle);
                     titleField.setReadOnly(true);
@@ -124,6 +124,7 @@ public class Borrowed extends VerticalLayout {
                         notification.open();
 
                         List<WishList> wishlist = wishListRepository.findAllWishByBookId(bookId);
+                        System.out.println("11111" + wishlist);
 
                         if(!wishlist.isEmpty()) {
                             WishList firstUser = wishlist.get(0);
