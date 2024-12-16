@@ -62,6 +62,7 @@ CREATE TABLE feedbacks (
     user_id INT,
     title LONGTEXT,
     content LONGTEXT,
+    status varchar(10) default 'Pending',
     FOREIGN KEY (user_id) REFERENCES accounts(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
