@@ -28,7 +28,7 @@ public final class BookController {
     @GetMapping("/find-by-title-and-author")
     public Optional<Book> findByTitleAndAuthor(String title, String author) {
         for (Book book : service.findAll()) {
-            if (book.getTitle().equals(title) && book.getAuthor().equals(author)) {
+            if (book.getTitle().equals(title) && book.getAllAuthors().contains(author)) {
                 return Optional.of(book);
             }
         }
@@ -50,7 +50,7 @@ public final class BookController {
     public String getAuthorByBookId(@RequestParam Integer bookId) {
         Optional<Book> bookOpt = service.findById(bookId);
         if (bookOpt.isPresent()) {
-            return bookOpt.get().getAuthor();
+            return bookOpt.get().getAllAuthors();
         } else {
             return "Book not found";
         }

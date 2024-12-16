@@ -61,7 +61,7 @@ public final class RentDataController {
     @GetMapping("/is-rented-by-names")
     public boolean isRentedByNames(String accountUsername, String bookTitle, String bookAuthor) {
         var accounts = accountService.findAllBy((account) -> account.getUsername().equals(accountUsername));
-        var books = bookService.findAllBy((book) -> book.getTitle().equals(bookTitle) && book.getAuthor().equals(bookAuthor));
+        var books = bookService.findAllBy((book) -> book.getTitle().equals(bookTitle) && book.getAllAuthors().equals(bookAuthor));
         return !accounts.isEmpty() && !books.isEmpty() && isRented(accounts.getFirst().getId(), books.getFirst().getId());
     }
 
