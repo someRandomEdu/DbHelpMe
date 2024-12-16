@@ -18,24 +18,34 @@ public final class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "title")
     private String title;
+
     private String author;
+
+    @Column(name = "publisher")
     private String publisher;
+
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "category_id")
     private Integer categoryId;
-    private Integer current;
+
+    @Column(name = "quantity")
+    private Integer quantity;
 
     public Book() {
     }
 
-    public Book(Integer id, String title, String author, String publisher, String description, Integer categoryId, Integer current) {
+    public Book(Integer id, String title, String author, String publisher, String description, Integer categoryId, Integer quantity) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.description = description;
         this.categoryId = categoryId;
-        this.current = current;
+        this.quantity = quantity;
     }
 
     public Integer getId() {
@@ -86,12 +96,12 @@ public final class Book {
         this.categoryId = categoryId;
     }
 
-    public Integer getCurrent() {
-        return current;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    public void setCurrent(Integer current) {
-        this.current = current;
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     @Override

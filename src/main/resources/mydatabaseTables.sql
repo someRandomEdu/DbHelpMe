@@ -20,6 +20,7 @@ CREATE TABLE books (
    publisher VARCHAR(255) NOT NULL DEFAULT '',
    description VARCHAR(255) NOT NULL DEFAULT '',
    category_id INT,
+    quantity INT NOT NULL DEFAULT 1,
    PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -129,17 +130,17 @@ INSERT INTO authors (author_name) VALUES
 ('Markus Zusak');
 
 -- Insert books
-INSERT INTO books (title, publisher, description, category_id) VALUES
-('To Kill a Mockingbird', 'J.B. Lippincott & Co.', 'A novel about racial injustice.', NULL),
-('1984', 'Secker & Warburg', 'A dystopian novel about totalitarianism.', NULL),
-('Pride and Prejudice', 'T. Egerton', 'A romantic novel of manners.', NULL),
-('The Great Gatsby', 'Charles Scribner\'s Sons', 'A novel about the American dream.', NULL),
-('Moby Dick', 'Harper & Brothers', 'A novel about a giant white whale.', NULL),
-('War and Peace', 'The Russian Messenger', 'A novel about Napoleon\'s invasion of Russia.', NULL),
-('The Catcher in the Rye', 'Little, Brown and Company', 'A story about teenage rebellion.', NULL),
-('The Hobbit', 'George Allen & Unwin', 'A fantasy novel about a hobbit\'s adventure.', NULL),
-('The Alchemist', 'HarperOne', 'A novel about following one\'s dreams.', NULL),
-('The Book Thief', 'Picador', 'A story set in Nazi Germany.', NULL);
+INSERT INTO books (title, publisher, description, category_id, quantity) VALUES
+('To Kill a Mockingbird', 'J.B. Lippincott & Co.', 'A novel about racial injustice.', NULL, 2),
+('1984', 'Secker & Warburg', 'A dystopian novel about totalitarianism.', NULL, 2),
+('Pride and Prejudice', 'T. Egerton', 'A romantic novel of manners.', NULL, 1),
+('The Great Gatsby', 'Charles Scribner\'s Sons', 'A novel about the American dream.', NULL, 1),
+('Moby Dick', 'Harper & Brothers', 'A novel about a giant white whale.', NULL, 1),
+('War and Peace', 'The Russian Messenger', 'A novel about Napoleon\'s invasion of Russia.', NULL, 2),
+('The Catcher in the Rye', 'Little, Brown and Company', 'A story about teenage rebellion.', NULL, 2),
+('The Hobbit', 'George Allen & Unwin', 'A fantasy novel about a hobbit\'s adventure.', NULL, 2),
+('The Alchemist', 'HarperOne', 'A novel about following one\'s dreams.', NULL, 3),
+('The Book Thief', 'Picador', 'A story set in Nazi Germany.', NULL, 3);
 
 -- Link books and authors in book_author
 INSERT INTO book_author (book_id, author_id) VALUES
