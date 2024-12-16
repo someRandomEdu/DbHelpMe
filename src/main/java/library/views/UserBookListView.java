@@ -107,7 +107,7 @@ public class UserBookListView extends VerticalLayout {
 
         availableBookGrid.addColumn(
                 new ComponentRenderer<>(Button::new, (button, books) -> {
-                    if(rentCheck(getUserName(), books.getTitle(), books.getAuthor())) {
+                    if(rentCheck(getUserName(), books.getTitle(), books.getAllAuthors())) {
                         Long expiredDays = getExpiredDays(getUserName(), books);
 
                         if(expiredDays >= 0) {
@@ -408,7 +408,7 @@ public class UserBookListView extends VerticalLayout {
 
         if(account == null) return false;
 
-        Book book = bookRepository.findByTitleAndAuthor(title, author);
+        Book book = bookRepository.findByTitle(title);
 
         return rentDataRepository.existsByAccountIdAndBookId(account.getId(), book.getId());
     }

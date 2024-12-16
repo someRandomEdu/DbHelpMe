@@ -75,7 +75,7 @@ public final class AppController {
     @GetMapping("find-book-by-title-and-author")
     public Optional<Book> findBookByTitleAndAuthor(String title, String author) {
         for (var book : findAllBooks()) {
-            if (book.getTitle().equals(title) && book.getAuthor().equals(author)) {
+            if (book.getTitle().equals(title) && book.getAllAuthors().contains(author)) {
                 return Optional.of(book);
             }
         }
@@ -107,7 +107,8 @@ public final class AppController {
     @GetMapping("find-book")
     public ResponseEntity<Book> findBook(@RequestBody Map<String, String> map) {
         var bk = bookService.findOneBy(value -> Objects.equals(value.getTitle(), map.get("title")) &&
-                Objects.equals(value.getAuthor(), map.get("author")));
+                value.getAllAuthors().contains(map.get("author"))
+        );
 
         return bk.isPresent() ? ResponseEntity.ok(bk.get()) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -180,7 +181,7 @@ public final class AppController {
     @PostMapping("/add-book")
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
         Optional<Book> tmp = bookService.findOneBy(value -> value.getTitle().equals(book.getTitle()) &&
-                value.getAuthor().equals(book.getAuthor()));
+                value.getAllAuthors().equals(book.getAllAuthors()));
 
         return tmp.isPresent() ? new ResponseEntity<>(tmp.get(), HttpStatus.ALREADY_REPORTED) :
                 new ResponseEntity<>(bookService.save(book), HttpStatus.CREATED);
@@ -305,7 +306,8 @@ public final class AppController {
 
             Optional<Book> bk = bookService.findOneBy(value ->
                     Objects.equals(value.getTitle(), map.get("title")) &&
-                            Objects.equals(value.getAuthor(), map.get("author")));
+                            value.getAllAuthors().contains(map.get("author"))
+            );
 
             if (bk.isPresent()) {
                 Book book = bk.get();
@@ -326,17 +328,17 @@ public final class AppController {
         }
     }
 
-    @PutMapping("/update-book")
-    public ResponseEntity<String> updateBook(@RequestBody Map<String, String> map) {
-        var operationResult = bookService.updateBook(map.get("originalTitle"), map.get("originalAuthor"),
-                new Book(null, map.get("title"), map.get("author"), map.get("publisher"), map.get("description"), Integer.parseInt(map.get("category_id")), Integer.parseInt(map.get("current")) ));
-
-        if (operationResult) {
-            return new ResponseEntity<>("Book successfully updated!", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Book not found!", HttpStatus.NOT_FOUND);
-        }
-    }
+//    @PutMapping("/update-book")
+//    public ResponseEntity<String> updateBook(@RequestBody Map<String, String> map) {
+//        var operationResult = bookService.updateBook(map.get("originalTitle"), map.get("originalAuthor"),
+//                new Book(null, map.get("title"), map.get("author"), map.get("publisher"), map.get("description"), Integer.parseInt(map.get("category_id")), Integer.parseInt(map.get("current")) ));
+//
+//        if (operationResult) {
+//            return new ResponseEntity<>("Book successfully updated!", HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>("Book not found!", HttpStatus.NOT_FOUND);
+//        }
+//    }
 
     @DeleteMapping("/delete-account-by-username")
     public ResponseEntity<String> deleteAccountByUsername(@RequestBody String username) {
