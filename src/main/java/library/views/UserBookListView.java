@@ -38,9 +38,8 @@ import java.awt.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static library.entity.Book.getCategoriesList;
@@ -457,7 +456,7 @@ public class UserBookListView extends VerticalLayout {
 
     private void addBookdialog() {
         TextField titleField = new TextField("Book Title");
-        TextField authorField = new TextField("Author");
+        TextArea authorField = new TextArea("Authors (comma separated)");
         TextField publisherField = new TextField("Publisher");
         TextArea descriptionField = new TextArea("description");
 
@@ -471,12 +470,13 @@ public class UserBookListView extends VerticalLayout {
 
         AddButton.addClickListener(event-> {
             String title = titleField.getValue();
-            String author = authorField.getValue();
+            String authorsString = authorField.getValue();
+            Set<String> authors = new HashSet<>(Arrays.asList(authorsString.split("\\s*,\\s*")));
             String publisher = publisherField.getValue();
             String description = descriptionField.getValue();
             Integer quantity = quantityField.getValue().intValue();
             Set<String> selectedCategories = comboBox.getSelectedItems();
-            addNewBookToDatabase(title, author, publisher, description, selectedCategories, quantity);
+            addNewBookToDatabase(title, authors, publisher, description, selectedCategories, quantity);
         });
 
         closeButton.addClickListener(event -> {
@@ -504,7 +504,7 @@ public class UserBookListView extends VerticalLayout {
         dialog.open();
     }
 
-    private void addNewBookToDatabase(String title, String author, String publisher, String description, Set<String> selectedCategories, Integer quantity) {
+    private void addNewBookToDatabase(String title, Set<String> authors, String publisher, String description, Set<String> selectedCategories, Integer quantity) {
         try (Connection connection = DatabaseHelper.getConnection()) {
             connection.setAutoCommit(false);
 
@@ -531,33 +531,35 @@ public class UserBookListView extends VerticalLayout {
                 if (generatedKeys.next()) {
                     int bookId = generatedKeys.getInt(1);
 
-                    int authorId;
-                    String getAuthorIdSql = "SELECT author_id FROM authors WHERE author_name = ?";
-                    try (PreparedStatement getAuthorIdStmt = connection.prepareStatement(getAuthorIdSql)) {
-                        getAuthorIdStmt.setString(1, author);
-                        ResultSet authorResult = getAuthorIdStmt.executeQuery();
-                        if (authorResult.next()) {
-                            authorId = authorResult.getInt("author_id");
-                        } else {
-                            String insertAuthorSql = "INSERT INTO authors (author_name) VALUES (?)";
-                            try (PreparedStatement authorStmt = connection.prepareStatement(insertAuthorSql, Statement.RETURN_GENERATED_KEYS)) {
-                                authorStmt.setString(1, author);
-                                authorStmt.executeUpdate();
-                                ResultSet authorKeys = authorStmt.getGeneratedKeys();
-                                if (authorKeys.next()) {
-                                    authorId = authorKeys.getInt(1);
-                                } else {
-                                    throw new SQLException("Failed to insert new author and retrieve authorId.");
+                    for (String author : authors) {
+                        int authorId;
+                        String getAuthorIdSql = "SELECT author_id FROM authors WHERE author_name = ?";
+                        try (PreparedStatement getAuthorIdStmt = connection.prepareStatement(getAuthorIdSql)) {
+                            getAuthorIdStmt.setString(1, author);
+                            ResultSet authorResult = getAuthorIdStmt.executeQuery();
+                            if (authorResult.next()) {
+                                authorId = authorResult.getInt("author_id");
+                            } else {
+                                String insertAuthorSql = "INSERT INTO authors (author_name) VALUES (?)";
+                                try (PreparedStatement authorStmt = connection.prepareStatement(insertAuthorSql, Statement.RETURN_GENERATED_KEYS)) {
+                                    authorStmt.setString(1, author);
+                                    authorStmt.executeUpdate();
+                                    ResultSet authorKeys = authorStmt.getGeneratedKeys();
+                                    if (authorKeys.next()) {
+                                        authorId = authorKeys.getInt(1);
+                                    } else {
+                                        throw new SQLException("Failed to insert new author and retrieve authorId.");
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    String insertBookAuthorSql = "INSERT INTO book_author (book_id, author_id) VALUES (?, ?)";
-                    try (PreparedStatement bookAuthorStmt = connection.prepareStatement(insertBookAuthorSql)) {
-                        bookAuthorStmt.setInt(1, bookId);
-                        bookAuthorStmt.setInt(2, authorId);
-                        bookAuthorStmt.executeUpdate();
+                        String insertBookAuthorSql = "INSERT INTO book_author (book_id, author_id) VALUES (?, ?)";
+                        try (PreparedStatement bookAuthorStmt = connection.prepareStatement(insertBookAuthorSql)) {
+                            bookAuthorStmt.setInt(1, bookId);
+                            bookAuthorStmt.setInt(2, authorId);
+                            bookAuthorStmt.executeUpdate();
+                        }
                     }
 
                     for (String category : selectedCategories) {
