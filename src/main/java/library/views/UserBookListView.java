@@ -8,6 +8,7 @@ import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeLabel;
@@ -83,6 +84,8 @@ public class UserBookListView extends VerticalLayout {
 
         availableBookGrid.removeAllColumns();
 
+        availableBookGrid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
+
         availableBookGrid.addColumn(Book::getId)
                 .setHeader("ID")
                 .setWidth("80px")
@@ -90,23 +93,19 @@ public class UserBookListView extends VerticalLayout {
 
         availableBookGrid.addColumn(Book::getTitle)
                 .setHeader("Title")
-                .setWidth("250px")
-                .setFlexGrow(0);
+                .setFlexGrow(1);
 
         availableBookGrid.addColumn(Book::getAllAuthors)
                 .setHeader("Authors")
-                .setWidth("250px")
-                .setFlexGrow(0);
+                .setFlexGrow(1);
 
         availableBookGrid.addColumn(Book::getPublisher)
                 .setHeader("Publisher")
-                .setWidth("150px")
-                .setFlexGrow(0);
+                .setFlexGrow(1);
 
         availableBookGrid.addColumn(Book::getCategoriesString)
                 .setHeader("Category ID")
-                .setWidth("150px")
-                .setFlexGrow(0);
+                .setFlexGrow(1);
 
         availableBookGrid.addColumn(
                 new ComponentRenderer<>(Button::new, (button, books) -> {
@@ -152,48 +151,48 @@ public class UserBookListView extends VerticalLayout {
                             }
                         });
                     }
-                })).setHeader("Status");
+                })).setHeader("Status")
+                .setFlexGrow(0);
 
         availableBookGrid.setItems(appController.findAllBooks());
         Pagination<Book> pagination = new Pagination<>(availableBookGrid, books, PAGE_SIZE);
 
         GridListDataView<Book> dataView = availableBookGrid.setItems(pagination.getCurrentPageItems());
-        TextField searchField = new TextField();
-        searchField.setWidth("50%");
-        searchField.setPlaceholder("Search");
-        searchField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
-        searchField.setValueChangeMode(ValueChangeMode.EAGER);
+        TextField titleSearchField = new TextField();
+        titleSearchField.setWidth("30%");
+        titleSearchField.setPlaceholder("Search by Title");
+        titleSearchField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
+        titleSearchField.setValueChangeMode(ValueChangeMode.EAGER);
 
-        searchField.addValueChangeListener(e -> {
-            String searchRes = searchField.getValue().trim();
+        TextField authorSearchField = new TextField();
+        authorSearchField.setWidth("30%");
+        authorSearchField.setPlaceholder("Search by Author");
+        authorSearchField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
+        authorSearchField.setValueChangeMode(ValueChangeMode.EAGER);
 
-            // Lọc sách trên toàn bộ danh sách
-            List<Book> filteredBooks = books.stream()
-                    .filter(book -> {
-                        if (searchRes.isEmpty()) {
-                            return true;
-                        }
+        MultiSelectComboBox<String> categoriesComboBox = new MultiSelectComboBox<>();
+        categoriesComboBox.setPlaceholder("Select categories");
+        categoriesComboBox.setItems(getCategoriesList());
+        categoriesComboBox.setWidth("30%");
 
-                        boolean matchesTitle = matchesTerm(book.getTitle(), searchRes);
-                        boolean matchesAuthor = matchesTerm(book.getAllAuthors(), searchRes);
-
-                        return matchesTitle || matchesAuthor;
-                    })
-                    .collect(Collectors.toList());
-
-            pagination.setItems(filteredBooks);
-            availableBookGrid.setItems(pagination.getCurrentPageItems());
-
-            availableBookGrid.getDataProvider().refreshAll();
-        });
+        titleSearchField.addValueChangeListener(e -> filterBooks(pagination, titleSearchField, authorSearchField, categoriesComboBox));
+        authorSearchField.addValueChangeListener(e -> filterBooks(pagination, titleSearchField, authorSearchField, categoriesComboBox));
+        categoriesComboBox.addValueChangeListener(e -> filterBooks(pagination, titleSearchField, authorSearchField, categoriesComboBox));
 
         Button addBookButton = new Button("Add book");
         addBookButton.addClickListener(event-> {
            addBookdialog();
         });
-        add(titleLabel, searchField);
-        if(CurrentUser.isAdmin()) add(addBookButton);
-        add(pagination.getLayout(), availableBookGrid);
+
+        HorizontalLayout searchLayout = new HorizontalLayout(titleSearchField, authorSearchField, categoriesComboBox);
+        searchLayout.setWidthFull();
+        searchLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        searchLayout.setSpacing(true);
+
+        add(titleLabel, searchLayout);
+        HorizontalLayout buttonLayout = new HorizontalLayout(pagination.getLayout());
+        if(CurrentUser.isAdmin()) buttonLayout.add(addBookButton);
+        add(buttonLayout, availableBookGrid);
 
     }
 
@@ -601,5 +600,21 @@ public class UserBookListView extends VerticalLayout {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void filterBooks(Pagination<Book> pagination, TextField titleSearchField, TextField authorSearchField, MultiSelectComboBox<String> categoriesComboBox) {
+        String titleSearch = titleSearchField.getValue().trim().toLowerCase();
+        String authorSearch = authorSearchField.getValue().trim().toLowerCase();
+        Set<String> selectedCategories = categoriesComboBox.getValue();
+
+        List<Book> filteredBooks = books.stream()
+                .filter(book -> (titleSearch.isEmpty() || book.getTitle().toLowerCase().contains(titleSearch))
+                        && (authorSearch.isEmpty() || book.getAllAuthors().toLowerCase().contains(authorSearch))
+                        && (selectedCategories.isEmpty() || selectedCategories.stream().anyMatch(book.getCategoriesString()::contains)))
+                .collect(Collectors.toList());
+
+        pagination.setItems(filteredBooks);
+        availableBookGrid.setItems(pagination.getCurrentPageItems());
+        availableBookGrid.getDataProvider().refreshAll();
     }
 }
