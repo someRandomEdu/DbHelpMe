@@ -149,6 +149,17 @@ public class NotificationPanel extends Div {
                     } else {
                         showNotificationDialog(notification);
                     }
+                    try (Connection connection = DatabaseHelper.getConnection()) {
+                        String sql = "UPDATE notifications SET status = 'read' WHERE status = 'unread'";
+                        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                            int rowsAffected = preparedStatement.executeUpdate();
+                            if (rowsAffected > 0) {
+                                System.out.println("All notifications marked as read.");
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
                 });
 
                 container.add(notificationItem);
