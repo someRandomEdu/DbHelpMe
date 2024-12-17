@@ -78,6 +78,7 @@ public class LoginView extends Div {
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, user_name);
             ResultSet rs = stmt.executeQuery();
+
             if (rs.next()) {
                 CurrentUser.setId(rs.getInt("id"));
                 CurrentUser.setUsername(rs.getString("username"));

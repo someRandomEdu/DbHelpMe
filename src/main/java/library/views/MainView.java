@@ -41,16 +41,19 @@ public class MainView extends AppLayout implements RouterLayout {
         DrawerToggle toggle = new DrawerToggle();
 
         H1 appTitle = new H1("Menu");
+
         appTitle.getStyle().set("font-size", "var(--lumo-font-size-l)")
                 .set("line-height", "var(--lumo-size-l)")
                 .set("margin", "0 var(--lumo-space-m)");
 
         SideNav nav;
-        if(CurrentUser.isAdmin()) {
+
+        if (CurrentUser.isAdmin()) {
             nav = getAdminNavigation();
         } else {
             nav = getPrimaryNavigation();
         }
+
         nav.addItem(new SideNavItem("Log out", "",
                 VaadinIcon.SIGN_OUT_ALT.create()));
 
@@ -88,25 +91,30 @@ public class MainView extends AppLayout implements RouterLayout {
     private SideNav getPrimaryNavigation() {
         // Tạo một SideNav mới và thêm các phần tử vào đây
         SideNav sideNav = new SideNav();
-
         String username = getUserName();
         UI.getCurrent().navigate("app/account/" + username);
 
-        sideNav.addItem(new SideNavItem("Dashboard", "/app/account/" + username,
+        sideNav.addItem(new SideNavItem("Dashboard", AccountView.getRoute(username),
                 VaadinIcon.DASHBOARD.create()));
-        sideNav.addItem(new SideNavItem("Books", "/booklist",
+
+        sideNav.addItem(new SideNavItem("Books", BookListView.getRoute(),
                 VaadinIcon.OPEN_BOOK.create()));
+
 //        sideNav.addItem(new SideNavItem("Rent books", "/rentbook",
 //                VaadinIcon.BOOK.create()));
 //        sideNav.addItem(new SideNavItem("Return books", "/returnbook",
 //                VaadinIcon.ARROW_FORWARD.create()));
-        sideNav.addItem(new SideNavItem("Borrowed List", "/borrowedTab",
+
+        sideNav.addItem(new SideNavItem("Borrowed List", BorrowedTab.getRoute(),
                 VaadinIcon.LIST_OL.create()));
-        sideNav.addItem(new SideNavItem("WishList", "/wishlist",
+
+        sideNav.addItem(new SideNavItem("WishList", WishListView.getRoute(),
                 VaadinIcon.BOOKMARK_O.create()));
-        sideNav.addItem(new SideNavItem("Account", "",
+
+        sideNav.addItem(new SideNavItem("Account", ProfileView.getRoute(),
                 VaadinIcon.USER.create()));
-        sideNav.addItem(new SideNavItem("Feedback", "/feedback",
+
+        sideNav.addItem(new SideNavItem("Feedback", FeedBackView.getRoute(),
                 VaadinIcon.SHARE.create()));
 
         return sideNav;
@@ -114,6 +122,7 @@ public class MainView extends AppLayout implements RouterLayout {
 
     private SideNav getAdminNavigation() {
         SideNav sideNav = getPrimaryNavigation();
+
         sideNav.addItem(new SideNavItem("Show Feedback", "show_feedback",
                 VaadinIcon.BROWSER.create()));
 

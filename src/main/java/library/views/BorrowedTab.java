@@ -65,6 +65,10 @@ public class BorrowedTab extends VerticalLayout {
         returnedTabContent.setSizeFull();
         this.notificationsRepository = notificationsRepository;
     }
+
+    public static String getRoute() {
+        return "/borrowedTab";
+    }
 }
 
 class LazyComponent extends Div {

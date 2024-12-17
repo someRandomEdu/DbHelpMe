@@ -169,7 +169,6 @@ insert into categories values(2, "math");
 insert into categories values(3, "biology");
 insert into categories values(4, "literature");
 
-
 insert into book_category values(2, 2);
 insert into book_category values(3, 3);
 insert into book_category values(4, 4);

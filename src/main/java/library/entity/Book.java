@@ -35,6 +35,7 @@ public final class Book {
     private Integer quantity;
 
     public Book() {
+
     }
 
     public Book(Integer id, String title, String author, String publisher, String description, Integer quantity) {

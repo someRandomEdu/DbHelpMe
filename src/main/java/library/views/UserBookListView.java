@@ -139,8 +139,10 @@ public class UserBookListView extends VerticalLayout {
 
                         button.addClickListener(event -> {
                             Integer cur = books.getQuantity();
-                            if(cur == 0) {
-                                Dialog dialog = createWishListDialog(CurrentUser.getId(), books.getId(), books.getTitle(), books.getAllAuthors());
+
+                            if (cur == 0) {
+                                Dialog dialog = createWishListDialog(CurrentUser.getId(), books.getId(),
+                                    books.getTitle(), books.getAllAuthors());
 
                                 dialog.open();
                             } else {
@@ -416,7 +418,7 @@ public class UserBookListView extends VerticalLayout {
 
         if(account == null) return false;
 
-        Book book = bookRepository.findByTitle(title);
+        Book book = bookRepository.findByTitleAndAuthor(title, author);
 
         return rentDataRepository.existsByAccountIdAndBookId(account.getId(), book.getId());
     }
@@ -436,7 +438,6 @@ public class UserBookListView extends VerticalLayout {
     }
 
     public boolean addToWishlist(Integer userId, Integer bookId) {
-
         String query = "INSERT INTO wishlist (user_id, book_id) VALUES (?, ?)";
 
         try (Connection connection = DatabaseHelper.getConnection();

@@ -56,4 +56,8 @@ public class WishListView extends VerticalLayout {
             }
         });
     }
+
+    public static String getRoute() {
+        return "/wishlist";
+    }
 }

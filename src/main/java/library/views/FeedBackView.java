@@ -111,4 +111,8 @@ public class FeedBackView extends VerticalLayout {
             error.getStyle().set("color", "red");
         }
     }
+
+    public static String getRoute() {
+        return "/feedback";
+    }
 }

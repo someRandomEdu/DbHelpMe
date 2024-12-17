@@ -37,4 +37,12 @@ public class AccountView extends VerticalLayout implements HasUrlParameter<Strin
         add(topLayout, new VerticalLayout(new NativeLabel("Rented books:"), rentedBookGrid),
             new VerticalLayout(new NativeLabel("Available books:"), availableBookGrid));
     }
+
+    public static String getRoute() {
+        return "/app/account";
+    }
+
+    public static String getRoute(String accountName) {
+        return getRoute() + "/" + accountName;
+    }
 }

@@ -3,6 +3,7 @@ package library.entity;
 import java.time.LocalDate;
 
 public class CurrentUser {
+    private static Account account;
     private static int id;
     private static String username;
     private static String password;
