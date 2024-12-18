@@ -10,6 +10,8 @@ import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import library.entity.Account;
+import library.entity.CurrentUser;
 import library.helper.DatabaseHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -126,16 +128,17 @@ public class SignupView extends Div {
                 error.setText("Username already exists!");
                 return;
             }
-            String query = "Insert into accounts ( userFullName, username, password, " +
-                    "is_admin, email, phone_number, date_of_birth)\n" +
-                    "Values (?,?,?,?,?,?,?)";
+            String query = "INSERT INTO accounts (userFullName, username, password, is_admin, email, phone_number, date_of_birth) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
             DatabaseHelper.connectToDatabase();
             try (Connection conn = DatabaseHelper.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(query)) {
+                 PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
                 stmt.setString(1, fullname);
                 stmt.setString(2, username);
                 stmt.setString(3, password);
-                stmt.setBoolean(4,false);
+                stmt.setBoolean(4, false);
                 stmt.setString(5, email);
                 stmt.setString(6, phoneNumber);
 
@@ -147,8 +150,26 @@ public class SignupView extends Div {
 
                 int rowsInserted = stmt.executeUpdate();
                 if (rowsInserted > 0) {
-                    System.out.println("Sign up succesfully");
-                    error.setText("Sign up succesfully, connecting to your account...");
+                    error.setText("Sign up successfully, connecting to your account...");
+
+                    try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            int generatedId = generatedKeys.getInt(1);
+                            CurrentUser.setId(generatedId);
+                        } else {
+                            throw new SQLException("Failed to retrieve the generated ID.");
+                        }
+                    }
+
+                    CurrentUser.setUserFullName(fullname);
+                    CurrentUser.setUsername(username);
+                    CurrentUser.setPassword(password);
+                    CurrentUser.setIsAdmin(false);
+                    CurrentUser.setEmail(email);
+                    CurrentUser.setPhoneNumber(phoneNumber);
+                    CurrentUser.setDateOfBirth(localDob);
+
+
                     UI.getCurrent().access(() -> {
                         UI.getCurrent().getElement().executeJs("setTimeout(function() {" +
                                 "window.location = '/main';" +
@@ -156,7 +177,7 @@ public class SignupView extends Div {
                         );
                     });
                 } else {
-                    System.out.println("Sign up unsuccesfully");
+                    error.setText("Sign up failed. Please try again.");
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -168,6 +189,7 @@ public class SignupView extends Div {
         });
     }
 }
+
 
 //    private TextField fullNameField = new TextField("Full Name");
 //    private TextField newTextField = new TextField("User name");
