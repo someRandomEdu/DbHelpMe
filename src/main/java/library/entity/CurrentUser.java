@@ -2,8 +2,12 @@ package library.entity;
 
 import java.time.LocalDate;
 
-public class CurrentUser {
+public final class CurrentUser {
     private static Account account = new Account();
+
+    static {
+        account = new Account(0, "", "", false, "", "", LocalDate.MIN);
+    }
 
     public static int getId() {
         return account.getId();
