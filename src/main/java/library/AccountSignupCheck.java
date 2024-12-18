@@ -34,4 +34,12 @@ public class AccountSignupCheck {
         accountRepository.save(newAccount);
         System.out.println("Account created successfully for: " + username);
     }
+
+    public boolean isEmailUsed(String email) {
+        return accountRepository.findAll().stream().anyMatch(account -> account.getEmail().equals(email));
+    }
+
+    public boolean isUsernameUsed(String username) {
+        return accountRepository.findAll().stream().anyMatch(account -> account.getUsername().equals(username));
+    }
 }

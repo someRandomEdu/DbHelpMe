@@ -49,5 +49,11 @@ public final class AccountService extends JpaService<Account, Integer> {
         return Result.errorReified("Account not found!");
     }
 
+    public boolean isEmailUsed(String email) {
+        return findAll().stream().anyMatch(account -> Objects.equals(account.getEmail(), email));
+    }
 
+    public boolean isUsernameUsed(String username) {
+        return findAll().stream().anyMatch(account -> Objects.equals(account.getUsername(), username));
+    }
 }

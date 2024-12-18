@@ -126,8 +126,12 @@ public class MainView extends AppLayout implements RouterLayout {
         SideNav sideNav = getPrimaryNavigation();
 
         sideNav.addItem(new SideNavItem("Show Feedback", "show_feedback",
-                VaadinIcon.BROWSER.create()));
+            VaadinIcon.BROWSER.create()));
 
         return sideNav;
+    }
+
+    public static String getRoute() {
+        return "/main";
     }
 }

@@ -128,10 +128,17 @@ public class SignupView extends Div {
                 error.setText("Username already exists!");
                 return;
             }
+
+            if (accountSignupCheck.isEmailUsed(email)) {
+                error.setText("Email address already in use!");
+                return;
+            }
+
             String query = "INSERT INTO accounts (userFullName, username, password, is_admin, email, phone_number, date_of_birth) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
             DatabaseHelper.connectToDatabase();
+
             try (Connection conn = DatabaseHelper.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -169,7 +176,6 @@ public class SignupView extends Div {
                     CurrentUser.setPhoneNumber(phoneNumber);
                     CurrentUser.setDateOfBirth(localDob);
 
-
                     UI.getCurrent().access(() -> {
                         UI.getCurrent().getElement().executeJs("setTimeout(function() {" +
                                 "window.location = '/main';" +
@@ -185,7 +191,7 @@ public class SignupView extends Div {
         });
 
         signin.addClickListener(event -> {
-            UI.getCurrent().navigate("/app"); // Login screen was moved to /app smh
+            UI.getCurrent().navigate(MainView.getRoute()); // Login screen was moved to /app smh
         });
     }
 }

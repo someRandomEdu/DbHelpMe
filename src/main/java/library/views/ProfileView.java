@@ -39,9 +39,7 @@ public final class ProfileView extends VerticalLayout {
             if (acc.isPresent()) {
                 var account = acc.get();
 
-                if (accountService.findByUsername(usernameTextField.getValue()).isPresent()) {
-                    Helpers.showNotification("Username already used up!", NotificationVariant.LUMO_ERROR);
-                } else if (!isValidPhoneNumber(phoneNumberTextField.getValue())) {
+                if (!isValidPhoneNumber(phoneNumberTextField.getValue())) {
                     Helpers.showNotification("Invalid phone number!", NotificationVariant.LUMO_ERROR);
                 } else {
                     account.setUsername(usernameTextField.getValue());
