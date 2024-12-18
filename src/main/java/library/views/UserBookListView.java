@@ -25,6 +25,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.html.Image;
 import library.*;
 import library.entity.Account;
 import library.entity.Book;
@@ -89,6 +90,22 @@ public class UserBookListView extends VerticalLayout {
                 .setHeader("ID")
                 .setWidth("80px")
                 .setFlexGrow(0);
+
+        availableBookGrid.addColumn(new ComponentRenderer<>(book -> {
+                    Image coverImage;
+                    if (book.getCover() != null && book.getCover().startsWith("https://covers.openlibrary.org")) {
+                        coverImage = new Image(book.getCover(), book.getTitle());
+                    } else {
+                        // Ảnh placeholder nếu không có link cover
+                        coverImage = new Image("path/to/default-book-cover.png", "No Cover");
+                    }
+                    coverImage.setWidth("100px");
+                    coverImage.setHeight("150px");
+                    coverImage.getStyle().set("object-fit", "cover");
+                    return coverImage;
+                })).setHeader("Cover")
+                .setFlexGrow(0)
+                .setWidth("120px");
 
         availableBookGrid.addColumn(Book::getTitle)
                 .setHeader("Title")
