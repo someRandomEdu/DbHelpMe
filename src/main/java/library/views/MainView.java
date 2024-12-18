@@ -97,7 +97,7 @@ public class MainView extends AppLayout implements RouterLayout {
         sideNav.addItem(new SideNavItem("Dashboard", AccountView.getRoute(username),
                 VaadinIcon.DASHBOARD.create()));
 
-        sideNav.addItem(new SideNavItem("Books", BookListView.getRoute(),
+        sideNav.addItem(new SideNavItem("Books", UserBookListView.getRoute(),
                 VaadinIcon.OPEN_BOOK.create()));
         sideNav.addItem(new SideNavItem("Explore books", "/bookview",
                 VaadinIcon.EXTERNAL_BROWSER.create()));

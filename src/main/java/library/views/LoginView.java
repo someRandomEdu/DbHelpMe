@@ -69,8 +69,6 @@ public class LoginView extends Div {
         return user_name;
     }
 
-
-
     private static void loadUserData(String user_name) {
         try {
             String query = "SELECT * FROM accounts WHERE username = ?";
@@ -89,16 +87,15 @@ public class LoginView extends Div {
                 CurrentUser.setPhoneNumber(rs.getString("phone_number"));
                 CurrentUser.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
-
 
     private boolean login(String user_name, String password) {
         DatabaseHelper.connectToDatabase();
         String query = "SELECT * FROM accounts WHERE username = ?";
+
         try (Connection conn = DatabaseHelper.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, user_name);
@@ -112,7 +109,7 @@ public class LoginView extends Div {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return false;
     }
-
 }

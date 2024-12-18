@@ -36,7 +36,7 @@ public final class AppController {
     }
 
     @GetMapping("/find-all-rented-books-from-account-id")
-    public List<Book> findAllRentedBooksFromAccountId(Long accountId) {
+    public List<Book> findAllRentedBooksFromAccountId(Integer accountId) {
         var result = new ArrayList<Book>();
 
         var rentDataList = rentDataService.findAllBy(rentData ->

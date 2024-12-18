@@ -637,4 +637,8 @@ public class UserBookListView extends VerticalLayout {
         availableBookGrid.setItems(pagination.getCurrentPageItems());
         availableBookGrid.getDataProvider().refreshAll();
     }
+
+    public static String getRoute() {
+        return "booklist";
+    }
 }

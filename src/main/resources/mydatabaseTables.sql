@@ -164,11 +164,10 @@ insert into book_author values(8, 5);
 insert into book_author values(5, 2);
 insert into book_author values(4, 3);
 
-insert into categories values(1, "code");
-insert into categories values(2, "math");
-insert into categories values(3, "biology");
-insert into categories values(4, "literature");
-
+insert into categories values(1, 'code');
+insert into categories values(2, 'math');
+insert into categories values(3, 'biology');
+insert into categories values(4, 'literature');
 
 insert into book_category values(2, 2);
 insert into book_category values(3, 3);
