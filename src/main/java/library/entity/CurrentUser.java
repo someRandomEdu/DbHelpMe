@@ -3,7 +3,7 @@ package library.entity;
 import java.time.LocalDate;
 
 public final class CurrentUser {
-    private static Account account = new Account();
+    private static Account account;
 
     static {
         account = new Account(0, "", "", false, "", "", LocalDate.MIN);
