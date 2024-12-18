@@ -639,6 +639,6 @@ public class UserBookListView extends VerticalLayout {
     }
 
     public static String getRoute() {
-        return "booklist";
+        return "/booklist";
     }
 }

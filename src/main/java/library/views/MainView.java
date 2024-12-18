@@ -94,12 +94,12 @@ public class MainView extends AppLayout implements RouterLayout {
         String username = getUserName();
         UI.getCurrent().navigate("app/account/" + username);
 
-        sideNav.addItem(new SideNavItem("Dashboard", AccountView.getRoute(username),
+        sideNav.addItem(new SideNavItem("Dashboard", AccountView.getRoute(),
                 VaadinIcon.DASHBOARD.create()));
 
         sideNav.addItem(new SideNavItem("Books", UserBookListView.getRoute(),
                 VaadinIcon.OPEN_BOOK.create()));
-        sideNav.addItem(new SideNavItem("Explore books", "/bookview",
+        sideNav.addItem(new SideNavItem("Explore books", UserBookListView.getRoute(),
                 VaadinIcon.EXTERNAL_BROWSER.create()));
 
 //        sideNav.addItem(new SideNavItem("Rent books", "/rentbook",
