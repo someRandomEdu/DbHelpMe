@@ -6,7 +6,7 @@ public final class CurrentUser {
     private static Account account;
 
     static {
-        account = new Account(0, "", "", false, "", "", LocalDate.MIN);
+        account = new Account(0, "", "", "", false, "", "", LocalDate.MIN);
     }
 
     public static int getId() {
