@@ -34,17 +34,25 @@ public final class Book {
     @Column(name = "quantity")
     private Integer quantity;
 
+    @Column(name = "cover")
+    private String cover;
+
+    @Column(name = "read_link")
+    private String readLink;
+
     public Book() {
 
     }
 
-    public Book(Integer id, String title, String author, String publisher, String description, Integer quantity) {
+    public Book(Integer id, String title, String author, String publisher, String description, Integer quantity, String cover, String readLink) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.description = description;
         this.quantity = quantity;
+        this.cover = cover;
+        this.readLink = readLink;
     }
 
     public Integer getId() {
@@ -85,6 +93,22 @@ public final class Book {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
+    }
+
+    public String getReadLink() {
+        return readLink;
+    }
+
+    public void setReadLink(String readLink) {
+        this.readLink = readLink;
     }
 
     @Override
