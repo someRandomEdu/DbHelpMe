@@ -18,9 +18,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.theme.lumo.LumoIcon;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import library.AppController;
-import library.BookRepository;
-import library.NotificationsRepository;
+import library.*;
 import library.entity.CurrentUser;
 import com.vaadin.flow.component.button.Button;
 
@@ -34,7 +32,9 @@ public class MainView extends AppLayout implements RouterLayout {
     private final BookRepository bookRepository;
     private NotificationPanel notificationPanel;
     private NotificationsRepository notificationsRepository;
-    public MainView(AppController appController, NotificationPanel notificationPanel, NotificationsRepository notificationsRepository, BookRepository bookRepository) {
+    private WishListRepository wishListRepository;
+    private NotificationsService notificationsService;
+    public MainView(AppController appController, NotificationPanel notificationPanel, NotificationsRepository notificationsRepository, BookRepository bookRepository, WishListRepository wishListRepository, NotificationsService notificationsService) {
         this.notificationsRepository = notificationsRepository;
         this.notificationPanel = notificationPanel;
         this.bookRepository = bookRepository;
@@ -65,7 +65,7 @@ public class MainView extends AppLayout implements RouterLayout {
         notiButton.addThemeVariants(ButtonVariant.LUMO_ICON);
         notiButton.setAriaLabel("Notifications");
 
-        Popover popover = notificationPanel.getPopover(notiButton, CurrentUser.getId(), notificationsRepository, appController, bookRepository);
+        Popover popover = notificationPanel.getPopover(notiButton, CurrentUser.getId(), notificationsRepository, appController, bookRepository, wishListRepository, notificationsService);
         notiButton.addClickListener(event -> {
             popover.open();
         });

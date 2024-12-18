@@ -38,10 +38,7 @@ import com.vaadin.flow.component.tabs.TabSheetVariant;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.theme.lumo.LumoIcon;
 import com.vaadin.flow.router.Route;
-import library.AppController;
-import library.BookRepository;
-import library.Notifications;
-import library.NotificationsRepository;
+import library.*;
 import library.entity.Book;
 import library.helper.DatabaseHelper;
 import org.bouncycastle.crypto.prng.drbg.DualECPoints;
@@ -58,15 +55,19 @@ public class NotificationPanel extends Div {
     private final StringHttpMessageConverter stringHttpMessageConverter;
     private BookRepository bookRepository;
     private NotificationsRepository notificationsRepository;
+    private WishListRepository wishListRepository;
+    private NotificationsService notificationsService;
     public NotificationPanel(StringHttpMessageConverter stringHttpMessageConverter) {
         this.stringHttpMessageConverter = stringHttpMessageConverter;
     }
     private AppController appController;
 
-    public Popover getPopover(Button button, Integer userId, NotificationsRepository notificationsRepository, AppController appController, BookRepository bookRepository) {
+    public Popover getPopover(Button button, Integer userId, NotificationsRepository notificationsRepository, AppController appController, BookRepository bookRepository, WishListRepository wishListRepository, NotificationsService notificationsService) {
         this.notificationsRepository = notificationsRepository;
         this.bookRepository = bookRepository;
         this.appController = appController;
+        this.notificationsService = notificationsService;
+        this.wishListRepository = wishListRepository;
         Popover popover = new Popover();
         popover.setTarget(button);
         popover.setWidth("300px");
@@ -79,8 +80,8 @@ public class NotificationPanel extends Div {
         List<Notifications> unreadList = notificationsRepository.findByUserIdAndStatusOrderByCreatedAtDesc(userId, "unread");
         List<Notifications> allList = notificationsRepository.findByUserIdOrderByCreatedAtDesc(userId);
 
-        Div unreadContent = createClickableNotificationList(unreadList, "No unread notifications");
-        Div allContent = createClickableNotificationList(allList, "No notifications");
+        Div unreadContent = createClickableNotificationList(unreadList, "No unread notifications", wishListRepository, notificationsService);
+        Div allContent = createClickableNotificationList(allList, "No notifications", wishListRepository, notificationsService);
 
         TabSheet tabSheet = new TabSheet();
         tabSheet.addThemeVariants(TabSheetVariant.LUMO_TABS_SMALL, TabSheetVariant.LUMO_NO_PADDING);
@@ -129,7 +130,7 @@ public class NotificationPanel extends Div {
                 .toInstant(ZoneOffset.UTC);
     }
 
-    private Div createClickableNotificationList(List<Notifications> notifications, String emptyMessage) {
+    private Div createClickableNotificationList(List<Notifications> notifications, String emptyMessage, WishListRepository wishListRepository, NotificationsService notificationsService) {
         Div container = new Div();
 
         if (notifications.isEmpty()) {
@@ -144,7 +145,7 @@ public class NotificationPanel extends Div {
 
                 notificationItem.addClickListener(event -> {
                     if (notification.getType().equals("wishlist")) {
-                        showBorrowDialog(notification, bookRepository);
+                        showBorrowDialog(notification, bookRepository, wishListRepository, notificationsService);
 //                    System.out.println(notification.getType());
                     } else {
                         showNotificationDialog(notification);
@@ -184,7 +185,7 @@ public class NotificationPanel extends Div {
         dialog.open();
     }
 
-    private void showBorrowDialog(Notifications notification, BookRepository bookRepository) {
+    private void showBorrowDialog(Notifications notification, BookRepository bookRepository, WishListRepository wishListRepository, NotificationsService notificationsService) {
         String message = notification.getMessage();
         String st = "The book ";
         String en = " is now available, do you want to borrow?";
@@ -207,7 +208,7 @@ public class NotificationPanel extends Div {
 
         DatePicker returnDateField = new DatePicker("Return Date");
         Button submitButton = new Button("Submit");
-        Button closeButton = new Button("Close");
+        Button closeButton = new Button("Do not borrow");
 
         submitButton.addClickListener(e -> {
             LocalDate returnDate = returnDateField.getValue();
@@ -247,6 +248,18 @@ public class NotificationPanel extends Div {
 
 
         closeButton.addClickListener(event -> {
+            List<WishList> wishlist = wishListRepository.findAllWishByBookId(book.getId());
+            System.out.println("11111" + wishlist);
+
+            if(!wishlist.isEmpty()) {
+                WishList firstUser = wishlist.get(0);
+                Integer userId = firstUser.getUserId();
+                String mes = "The book " + bookTitle + " is now available, do you want to borrow?";
+                notificationsService.saveNotification(userId, "wishlist", mes);
+
+                wishListRepository.delete(firstUser);
+            }
+
             event.getSource().getUI().ifPresent(ui -> {
                 ui.getChildren().filter(child -> child instanceof Dialog)
                         .findFirst().ifPresent(dialog -> {

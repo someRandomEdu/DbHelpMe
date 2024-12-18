@@ -8,11 +8,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.router.Route;
+import library.views.MainView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Route("bookview")
+@Route(value = "bookview", layout = MainView.class)
 public class BookView extends VerticalLayout {
 
     private final OpenLibraryService bookService = new OpenLibraryService();
