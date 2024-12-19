@@ -1,15 +1,27 @@
 package library.entity;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "feedbacks")
 public class Feedback {
     private String title;
     private String content;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int feedback_id;
+
     private int user_id;
+    private String status;
+
+    public Feedback() {}
 
     public Feedback(int feedback_id, int user_id, String content) {
         this.content = content;
         this.feedback_id = feedback_id;
         this.user_id = user_id;
+        status = "Pending";
     }
 
     public Feedback(int feedback_id, int user_id, String content, String title) {
@@ -17,6 +29,15 @@ public class Feedback {
         this.user_id = user_id;
         this.content = content;
         this.title = title;
+        status = "Pending";
+    }
+
+    public Feedback(int feedback_id, int user_id, String content, String title, String status) {
+        this.feedback_id = feedback_id;
+        this.user_id = user_id;
+        this.content = content;
+        this.title = title;
+        this.status = status;
     }
 
     public int getFeedback_id() {
@@ -39,6 +60,10 @@ public class Feedback {
         return title;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -49,5 +74,9 @@ public class Feedback {
 
     public void setUser_id(int user_id) {
         this.user_id = user_id;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

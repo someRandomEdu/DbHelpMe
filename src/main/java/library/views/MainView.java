@@ -19,6 +19,7 @@ import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.theme.lumo.LumoIcon;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import library.*;
+import library.SonTest.BookView;
 import library.entity.CurrentUser;
 import com.vaadin.flow.component.button.Button;
 
@@ -101,7 +102,7 @@ public class MainView extends AppLayout implements RouterLayout {
         sideNav.addItem(new SideNavItem("Books", UserBookListView.getRoute(),
                 VaadinIcon.OPEN_BOOK.create()));
 
-        sideNav.addItem(new SideNavItem("Explore books", "bookview",
+        sideNav.addItem(new SideNavItem("Explore books", BookView.getRoute(),
                 VaadinIcon.EXTERNAL_BROWSER.create()));
 
 //        sideNav.addItem(new SideNavItem("Rent books", "/rentbook",
@@ -127,7 +128,7 @@ public class MainView extends AppLayout implements RouterLayout {
     private SideNav getAdminNavigation() {
         SideNav sideNav = getPrimaryNavigation();
 
-        sideNav.addItem(new SideNavItem("Show Feedback", "show_feedback",
+        sideNav.addItem(new SideNavItem("Show Feedback", ShowReportView.getRoute(),
             VaadinIcon.BROWSER.create()));
 
         return sideNav;

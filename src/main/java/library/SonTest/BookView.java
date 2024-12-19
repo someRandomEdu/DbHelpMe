@@ -15,7 +15,6 @@ import java.util.List;
 
 @Route(value = "bookview", layout = MainView.class)
 public class BookView extends VerticalLayout {
-
     private final OpenLibraryService bookService = new OpenLibraryService();
     private final Grid<Books> bookGrid = new Grid<>(Books.class, false);
 
@@ -46,5 +45,9 @@ public class BookView extends VerticalLayout {
 
         // Thêm các component vào layout
         add(searchField, searchButton, bookGrid);
+    }
+
+    public static String getRoute() {
+        return "/bookview";
     }
 }

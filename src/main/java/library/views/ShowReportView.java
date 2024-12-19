@@ -5,9 +5,11 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import library.Helpers;
 import library.entity.Feedback;
 import library.helper.DatabaseHelper;
 
@@ -18,7 +20,6 @@ import java.util.List;
 @CssImport("./styles/custom-grid-cell.css")
 @Route(value = "show_feedback", layout = MainView.class)
 public class ShowReportView extends VerticalLayout {
-
     private ComboBox<String> statusComboBox;
     private Grid<Feedback> tableView;
 
@@ -33,6 +34,7 @@ public class ShowReportView extends VerticalLayout {
         updateFeedbackList("All");
 
         tableView.removeAllColumns();
+
         tableView.addColumn(Feedback::getFeedback_id)
                 .setHeader("Feedback ID")
                 .setWidth("110px")
@@ -47,13 +49,17 @@ public class ShowReportView extends VerticalLayout {
                 .setFlexGrow(0);
         tableView.addColumn(Feedback::getContent)
                 .setHeader("Feedback Content");
+        tableView.addColumn(Feedback::getStatus).setHeader("Status");
 
         tableView.getColumns().forEach(column -> column.setClassNameGenerator(item -> "./styles/custom-grid-cell.css"));
 
         Button showDetails = new Button("Show Detail", event -> {
             Feedback selectedFeedback = tableView.asSingleSelect().getValue();
+
             if (selectedFeedback != null) {
                 UI.getCurrent().navigate("feedbackdetail/" + selectedFeedback.getFeedback_id());
+            } else {
+                Helpers.showNotification("Feedback not selected!", NotificationVariant.LUMO_ERROR);
             }
         });
 
@@ -61,7 +67,6 @@ public class ShowReportView extends VerticalLayout {
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(JustifyContentMode.CENTER);
         buttonLayout.add(showDetails);
-
         add(statusComboBox, tableView, buttonLayout);
     }
 
@@ -79,6 +84,7 @@ public class ShowReportView extends VerticalLayout {
         }
 
         DatabaseHelper.connectToDatabase();
+
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -87,17 +93,22 @@ public class ShowReportView extends VerticalLayout {
             }
 
             ResultSet rs = stmt.executeQuery();
+
             while (rs.next()) {
                 ans.add(new Feedback(
-                        rs.getInt("feedback_id"),
-                        rs.getInt("user_id"),
-                        rs.getString("title"),
-                        rs.getString("content")
+                    rs.getInt("feedback_id"),
+                    rs.getInt("user_id"),
+                    rs.getString("title"),
+                    rs.getString("content")
                 ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return ans;
+    }
+
+    public static String getRoute() {
+        return "/show_feedback";
     }
 }

@@ -36,3 +36,6 @@ build/
 *.yml
 *.png
 *.jpg
+*.svg
+*.png
+*.jpg
