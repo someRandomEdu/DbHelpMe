@@ -1,5 +1,7 @@
 package library.views;
 
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.server.StreamResource;
 import library.entity.Account;
 import library.AppController;
 import library.entity.Book;
@@ -18,7 +20,6 @@ public class AccountView extends VerticalLayout {
     // private final Grid<Book> availableBookGrid;
 
     public AccountView(AppController appController) {
-
         var account = CurrentUser.getAccount();
         var topLayout = new VerticalLayout(new NativeLabel("Hi, " + account.getUsername() + "!"));
         topLayout.setDefaultHorizontalComponentAlignment(Alignment.END);
@@ -49,9 +50,5 @@ public class AccountView extends VerticalLayout {
 
     public static String getRoute() {
         return "/app/account";
-    }
-
-    public static String getRoute(String accountName) {
-        return getRoute() + "/" + accountName;
     }
 }
