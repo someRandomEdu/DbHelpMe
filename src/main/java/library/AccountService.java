@@ -1,6 +1,7 @@
 package library;
 
 import library.entity.Account;
+import library.entity.CurrentUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,21 @@ public final class AccountService extends JpaService<Account, Integer> {
         return Result.errorReified("Account not found!");
     }
 
+    public Result<Account, String> login(String username, String password) {
+        for (var account : findAll()) {
+            if (Objects.equals(account.getUsername(), username)) {
+                if (Objects.equals(account.getPassword(), password)) {
+                    CurrentUser.setAccount(account);
+                    return Result.successReified(account);
+                } else {
+                    return Result.errorReified("Wrong password!");
+                }
+            }
+        }
+
+        return Result.errorReified("Account not found!");
+    }
+
     public Result<Void, String> deleteByUsernameAndPassword(String username, String password) {
         for (Account account : findAll()) {
             if (Objects.equals(account.getUsername(), username)) {
@@ -49,5 +65,11 @@ public final class AccountService extends JpaService<Account, Integer> {
         return Result.errorReified("Account not found!");
     }
 
+    public boolean isEmailUsed(String email) {
+        return findAll().stream().anyMatch(account -> Objects.equals(account.getEmail(), email));
+    }
 
+    public boolean isUsernameUsed(String username) {
+        return findAll().stream().anyMatch(account -> Objects.equals(account.getUsername(), username));
+    }
 }

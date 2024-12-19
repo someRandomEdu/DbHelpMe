@@ -19,6 +19,7 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
@@ -65,7 +66,6 @@ public class UserBookListView extends VerticalLayout {
         this.accountRepository = accountRepository;
         this.books = bookRepository.findAll();
         availableBookGrid = new Grid<>(Book.class);
-
         setParameter();
         setAlignItems(Alignment.CENTER);
         setSizeFull();
@@ -198,9 +198,13 @@ public class UserBookListView extends VerticalLayout {
         categoriesComboBox.addValueChangeListener(e -> filterBooks(pagination, titleSearchField, authorSearchField, categoriesComboBox));
 
         Button addBookButton = new Button("Add book");
+        Button modifyBookButton = new Button("Modify book");
+
         addBookButton.addClickListener(event-> {
            addBookdialog();
         });
+
+        modifyBookButton.addClickListener(event -> modifyBookDialog());
 
         HorizontalLayout searchLayout = new HorizontalLayout(titleSearchField, authorSearchField, categoriesComboBox);
         searchLayout.setWidthFull();
@@ -209,7 +213,12 @@ public class UserBookListView extends VerticalLayout {
 
         add(titleLabel, searchLayout);
         HorizontalLayout buttonLayout = new HorizontalLayout(pagination.getLayout());
-        if(CurrentUser.isAdmin()) buttonLayout.add(addBookButton);
+
+        if(CurrentUser.isAdmin()) {
+            buttonLayout.add(addBookButton);
+            buttonLayout.add(modifyBookButton);
+        }
+
         add(buttonLayout, availableBookGrid);
 
     }
@@ -522,6 +531,61 @@ public class UserBookListView extends VerticalLayout {
         dialog.open();
     }
 
+    private void modifyBookDialog() {
+        var dialog = new Dialog("Modify Book");
+        var bookSelector = new Select<Book>();
+        bookSelector.setLabel("Book to modify");
+        bookSelector.setItems(bookRepository.findAll());
+        var newTitleTextField = new TextField("New Title");
+        // var newAuthorsTextField = new TextField("New Authors");
+        var newPublisherTextField = new TextField("New Publisher");
+        var newDescriptionTextField = new TextField("New Description");
+        // var newCategoriesTextField = new TextField("New Category");
+        var newQuantityTextField = new TextField("New Quantity");
+        var newCoverTextField = new TextField("New Cover");
+        var newReadLinkTextField = new TextField("New Read Link");
+        var proceedButton = new Button("Proceed");
+
+        bookSelector.addValueChangeListener(event -> {
+            var book = event.getValue();
+            newTitleTextField.setValue(book.getTitle());
+            // newAuthorsTextField.setValue(book.getAllAuthors());
+            newPublisherTextField.setValue(book.getPublisher());
+            newDescriptionTextField.setValue(book.getDescription());
+            // newCategoriesTextField.setValue(book.getCategoriesString());
+            newQuantityTextField.setValue(book.getQuantity().toString());
+        });
+
+        proceedButton.addClickListener(event -> {
+            var bk = bookSelector.getOptionalValue();
+
+            if (bk.isPresent()) {
+                try {
+                    Book book = bk.get();
+                    book.setTitle(newTitleTextField.getValue());
+                    book.setPublisher(newPublisherTextField.getValue());
+                    book.setDescription(newDescriptionTextField.getValue());
+                    book.setQuantity(Integer.parseInt(newQuantityTextField.getValue()));
+                    book.setCover(newCoverTextField.getValue());
+                    book.setReadLink(newReadLinkTextField.getValue());
+                    bookRepository.save(book);
+                    Helpers.showNotification("Successfully modified book!", NotificationVariant.LUMO_SUCCESS);
+                } catch (NumberFormatException e) {
+                    Helpers.showNotification("Invalid book quantity!", NotificationVariant.LUMO_ERROR);
+                }
+            } else {
+                Helpers.showNotification("Book not selected!", NotificationVariant.LUMO_ERROR);
+            }
+
+            dialog.close();
+        });
+
+        dialog.add(new VerticalLayout(bookSelector, newTitleTextField, newPublisherTextField, newDescriptionTextField,
+            newQuantityTextField, proceedButton));
+
+        dialog.open();
+    }
+
     private void addNewBookToDatabase(String title, Set<String> authors, String publisher, String description, Set<String> selectedCategories, Integer quantity) {
         try (Connection connection = DatabaseHelper.getConnection()) {
             connection.setAutoCommit(false);
@@ -636,5 +700,9 @@ public class UserBookListView extends VerticalLayout {
         pagination.setItems(filteredBooks);
         availableBookGrid.setItems(pagination.getCurrentPageItems());
         availableBookGrid.getDataProvider().refreshAll();
+    }
+
+    public static String getRoute() {
+        return "/booklist";
     }
 }

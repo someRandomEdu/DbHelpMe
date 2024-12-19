@@ -2,78 +2,82 @@ package library.entity;
 
 import java.time.LocalDate;
 
-public class CurrentUser {
+public final class CurrentUser {
     private static Account account;
-    private static int id;
-    private static String username;
-    private static String password;
-    private static String userFullName;
-    private static boolean isAdmin;
-    private static String email;
-    private static String phoneNumber;
-    private static LocalDate dateOfBirth;
+
+    static {
+        account = new Account(0, "", "", "", false, "", "", LocalDate.MIN);
+    }
 
     public static int getId() {
-        return id;
+        return account.getId();
     }
 
     public static void setId(int newId) {
-        id = newId;
+        account.setId(newId);
     }
 
     public static String getUsername() {
-        return username;
+        return account.getUsername();
     }
 
     public static void setUsername(String newUsername) {
-        username = newUsername;
+       account.setUsername(newUsername);
     }
 
     public static String getPassword() {
-        return password;
+        return account.getPassword();
     }
 
     public static void setPassword(String newPassword) {
-        password = newPassword;
+        account.setPassword(newPassword);
     }
 
     public static String getUserFullName() {
-        return userFullName;
+        return account.getUserFullName();
     }
 
     public static void setUserFullName(String newFullName) {
-        userFullName = newFullName;
+        account.setUserFullName(newFullName);
     }
 
     public static boolean isAdmin() {
-        return isAdmin;
+        return account.getIsAdmin();
     }
 
     public static void setIsAdmin(boolean isAdmin) {
-        CurrentUser.isAdmin = isAdmin;
+        account.setIsAdmin(isAdmin);
     }
 
     public static String getEmail() {
-        return email;
+        return account.getEmail();
     }
 
     public static void setEmail(String newEmail) {
-        email = newEmail;
+        account.setEmail(newEmail);
     }
 
     public static String getPhoneNumber() {
-        return phoneNumber;
+        return account.getPhoneNumber();
     }
 
     public static void setPhoneNumber(String newPhoneNumber) {
-        phoneNumber = newPhoneNumber;
+        account.setPhoneNumber(newPhoneNumber);
     }
 
     public static LocalDate getDateOfBirth() {
-        return dateOfBirth;
+        return account.getDateOfBirth();
     }
 
     public static void setDateOfBirth(LocalDate newDateOfBirth) {
-        dateOfBirth = newDateOfBirth;
+        account.setDateOfBirth(newDateOfBirth);
+    }
+
+    public static Account getAccount() {
+        return account;
+    }
+
+    public static void setAccount(Account newAccount) {
+        account = newAccount;
     }
 }

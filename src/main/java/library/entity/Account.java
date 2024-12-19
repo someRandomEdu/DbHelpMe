@@ -127,7 +127,6 @@ public final class Account {
         this.userFullName = userFullName;
     }
 
-
     @Override
     public boolean equals(Object o) {
         return o instanceof Account other && Objects.equals(id, other.id);
