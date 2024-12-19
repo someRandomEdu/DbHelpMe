@@ -50,7 +50,7 @@ public class LoginView extends Div {
         if (login(username, password)) {
             System.out.println("Đăng nhập thành công!");
             loadUserData(user_name);
-            UI.getCurrent().navigate("main");
+            UI.getCurrent().navigate("/book-chart");
         } else {
             error.setText("Invalid user name or password");
             System.out.println("Thông tin đăng nhập không đúng!");
