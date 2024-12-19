@@ -155,8 +155,8 @@ public final class Book {
 
     public static List<String> getCategoriesList() {
         List<String> categories = new ArrayList<>();
-
         String query = "SELECT name FROM categories";
+
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {

@@ -1,6 +1,7 @@
 package library;
 
 import library.entity.Account;
+import library.entity.CurrentUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,21 @@ public final class AccountService extends JpaService<Account, Integer> {
             if (Objects.equals(account.getUsername(), username)) {
                 return Objects.equals(account.getPassword(), password) ? Result.successReified(account) :
                     Result.errorReified("Wrong password!");
+            }
+        }
+
+        return Result.errorReified("Account not found!");
+    }
+
+    public Result<Account, String> login(String username, String password) {
+        for (var account : findAll()) {
+            if (Objects.equals(account.getUsername(), username)) {
+                if (Objects.equals(account.getPassword(), password)) {
+                    CurrentUser.setAccount(account);
+                    return Result.successReified(account);
+                } else {
+                    return Result.errorReified("Wrong password!");
+                }
             }
         }
 

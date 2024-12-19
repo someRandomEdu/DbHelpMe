@@ -34,6 +34,7 @@ public class MainView extends AppLayout implements RouterLayout {
     private NotificationsRepository notificationsRepository;
     private WishListRepository wishListRepository;
     private NotificationsService notificationsService;
+
     public MainView(AppController appController, NotificationPanel notificationPanel, NotificationsRepository notificationsRepository, BookRepository bookRepository, WishListRepository wishListRepository, NotificationsService notificationsService) {
         this.notificationsRepository = notificationsRepository;
         this.notificationPanel = notificationPanel;
@@ -91,14 +92,15 @@ public class MainView extends AppLayout implements RouterLayout {
     private SideNav getPrimaryNavigation() {
         // Tạo một SideNav mới và thêm các phần tử vào đây
         SideNav sideNav = new SideNav();
-        String username = getUserName();
-        UI.getCurrent().navigate("app/account/" + username);
+        // String username = getUserName();
+        UI.getCurrent().navigate(AccountView.getRoute());
 
         sideNav.addItem(new SideNavItem("Dashboard", AccountView.getRoute(),
                 VaadinIcon.DASHBOARD.create()));
 
-        sideNav.addItem(new SideNavItem("Books", UserBookListView.getRoute(),
-                VaadinIcon.OPEN_BOOK.create()));
+        // sideNav.addItem(new SideNavItem("Books", UserBookListView.getRoute(),
+        //         VaadinIcon.OPEN_BOOK.create()));
+
         sideNav.addItem(new SideNavItem("Explore books", UserBookListView.getRoute(),
                 VaadinIcon.EXTERNAL_BROWSER.create()));
 
