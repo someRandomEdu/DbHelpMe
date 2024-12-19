@@ -2,11 +2,19 @@ package library.views;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.Route;
 
+import java.awt.*;
 import java.sql.*;
 
 import com.vaadin.flow.component.login.AbstractLogin;
@@ -23,9 +31,10 @@ public class LoginView extends Div {
 
     public LoginView() {
         loginOverlay = new LoginOverlay();
-        loginOverlay.setTitle("Chua nghi ra");
+        loginOverlay.setTitle("SomeRandom Lib");
         loginOverlay.setDescription("Better than UET-leak");
         loginOverlay.addLoginListener(this::onLogin);
+        loginOverlay.addForgotPasswordListener(this::onforgotPassword);
 
         Button signupButton = new Button("Sign up");
         signupButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
@@ -111,5 +120,9 @@ public class LoginView extends Div {
         }
 
         return false;
+    }
+
+    private void onforgotPassword(AbstractLogin.ForgotPasswordEvent event) {
+        UI.getCurrent().navigate("/forgot-password");
     }
 }

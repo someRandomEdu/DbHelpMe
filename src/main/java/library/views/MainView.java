@@ -58,7 +58,7 @@ public class MainView extends AppLayout implements RouterLayout {
         nav.addItem(new SideNavItem("Log out", "",
                 VaadinIcon.SIGN_OUT_ALT.create()));
 
-        H2 viewTitle = new H2("My Library");
+        H2 viewTitle = new H2("SomeRandom Lib");
         viewTitle.getStyle().set("font-size", "var(--lumo-font-size-l)")
                 .set("margin", "0");
 
