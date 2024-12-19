@@ -1,11 +1,11 @@
 package library.views;
 
 
+import library.entity.CurrentUser;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeLabel;
@@ -20,21 +20,22 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 
-import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import library.*;
 import library.entity.Book;
-import library.entity.CurrentUser;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
-
 import static library.entity.CurrentUser.*;
-import static library.views.LoginView.getUserName;
+import library.RentDataRepository;
+import library.AppController;
+import library.BookRepository;
+import library.WishListRepository;
+import library.NotificationsRepository;
+import library.NotificationsService;
+import library.RentData;
+import library.WishList;
 
 @Route(value = "/app/borrowed", layout = MainView.class)
 public class Borrowed extends VerticalLayout {
