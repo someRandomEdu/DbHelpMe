@@ -148,10 +148,10 @@ public class SignupView extends Div {
                 int rowsInserted = stmt.executeUpdate();
                 if (rowsInserted > 0) {
                     System.out.println("Sign up succesfully");
-                    error.setText("Sign up succesfully, connecting to your account...");
+                    error.setText("Sign up succesfully, back to sign in...");
                     UI.getCurrent().access(() -> {
                         UI.getCurrent().getElement().executeJs("setTimeout(function() {" +
-                                "window.location = '/main';" +
+                                "window.location = '';" +
                                 "}, 1000);"
                         );
                     });
