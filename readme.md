@@ -1,7 +1,5 @@
 # 📚 **Some Random Library**
 
-![Project Banner](./src/main/resources/images/Lib_DB.png)  
-
 ## 🛠 **Setup**
 
 ### **Prerequisites**
