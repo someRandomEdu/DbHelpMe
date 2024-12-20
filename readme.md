@@ -22,15 +22,15 @@
 - Save and run AppStart to start using our application
 
 ## Preview 👓
-#Database Structure
+# Database Structure
 
 <img src="./src/main/resources/images/Lib_DB.png">
 
-###Login Scene
+# Login Scene
 
 <img src="./src/main/resources/images/img.png">
 
-#Dash Board
+# Dash Board
 
 <img src="./src/main/resources/images/img_1.png">
 
@@ -38,7 +38,7 @@
 
 <img src="./src/main/resources/images/img_2.png">
 
-#Borrow List
+# Borrow List
 
 <img src="./src/main/resources/images/img_3.png">
 
