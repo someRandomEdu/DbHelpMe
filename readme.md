@@ -22,6 +22,8 @@
 - Save and run AppStart to start using our application
 
 ## Preview 👓
+Database Structure
+<img src="./src/main/resources/image/Lib_DB.png">
 
 
 ## 💗 Special thanks to 💖
