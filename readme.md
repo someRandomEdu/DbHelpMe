@@ -24,19 +24,14 @@
 ## Preview 👓
 ## Database Structure
 <img src="./src/main/resources/images/Lib_DB.png">
-
 ## Login Scene
 <img src="./src/main/resources/images/img.png">
-
 ## Dash Board
 <img src="./src/main/resources/images/img_1.png">
-
 ## Explore Book Using API
 <img src="./src/main/resources/images/img_2.png">
-
 ## Borrow List
 <img src="./src/main/resources/images/img_3.png">
-
 ## 💗 Special thanks to 💖
 * [minhtruong1411](https://github.com/minhtruong1411)
 * [SonLeUET](https://github.com/SonLeUET)
