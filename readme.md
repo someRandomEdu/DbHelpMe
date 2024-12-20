@@ -1,41 +1,59 @@
-# Some Random Library📚
+# 📚 **Some Random Library**
 
-## Setup 🛠
+![Project Banner](./src/main/resources/images/Lib_DB.png)  
 
-### Prerequisites
+## 🛠 **Setup**
 
-- IntelliJ IDEA
-- JDK22
-- MySQL
-- Vaadin
+### **Prerequisites**
+- **IDE**: IntelliJ IDEA  
+- **JDK**: Version 22+  
+- **Database**: MySQL  
+- **Framework**: Vaadin  
 
-### Step by step
+### **Installation Guide**
 
-- Clone and open this repository in IntelliJ IDEA
-- Config class `DatabaseHelper.java` to your local settings
-- Change  application.yml to your local settings
-- Config the project SDK to JDK23 (File -> Project Structure -> Project Settings -> Project)
-- Open Maven tool window and run `clean` and `install`
-- Open `Run/Debug Configuration` window
-- Click New Application and choose JDK23
-- Edit configuration with Main Class is Entry Point
-- Save and run AppStart to start using our application
-
-## Preview 👓
-## Database Structure
-<img src="./src/main/resources/images/Lib_DB.png">
-## Login Scene
-<img src="./src/main/resources/images/img.png">
-## Dash Board
-<img src="./src/main/resources/images/img_1.png">
-## Explore Book Using API
-<img src="./src/main/resources/images/img_2.png">
-## Borrow List
-<img src="./src/main/resources/images/img_3.png">
-## 💗 Special thanks to 💖
-* [minhtruong1411](https://github.com/minhtruong1411)
-* [SonLeUET](https://github.com/SonLeUET)
+1. Clone the repository and open it in **IntelliJ IDEA**.  
+2. Update database configuration in `DatabaseHelper.java` to match your local settings.  
+3. Edit the `application.yml` file with your local configurations.  
+4. Update the project SDK to **JDK23**:  
+   - Go to `File` > `Project Structure` > `Project Settings` > `Project`.  
+5. Open the Maven tool window and run the following tasks:  
+   - `clean`  
+   - `install`  
+6. Open `Run/Debug Configuration`:  
+   - Click **New Application** and choose **JDK23**.  
+   - Set the **Main Class** to `Entry Point`.  
+7. Save the configuration and run `AppStart` to launch the application.
 
 ---
-<h1 align="center"> 😴 Made by Some Random team ! 🛌</h1>
-<p align="center"><i>Dec 2024</i></p>
+
+## 💎 **Preview**
+
+### **Database Structure**
+<img src="./src/main/resources/images/Lib_DB.png" alt="Database Structure" width="600">  
+
+### **Login Scene**
+<img src="./src/main/resources/images/img.png" alt="Login Scene" width="600">  
+
+### **Dashboard**
+<img src="./src/main/resources/images/img_1.png" alt="Dashboard" width="600">  
+
+### **Explore Books (API)**
+<img src="./src/main/resources/images/img_2.png" alt="Explore Books Using API" width="600">  
+
+### **Borrow List**
+<img src="./src/main/resources/images/img_3.png" alt="Borrow List" width="600">  
+
+---
+
+## 💖 **Special Thanks To**
+
+- [**minhtruong1411**](https://github.com/minhtruong1411)  
+- [**SonLeUET**](https://github.com/SonLeUET)  
+
+---
+
+<h1 align="center">🛌 Made with love by the Some Random Team! 🏤</h1>  
+<p align="center"><i>December 2024</i></p>  
+
+---
