@@ -39,11 +39,23 @@
 ### **Dashboard**
 <img src="./src/main/resources/images/img_1.png" alt="Dashboard" width="600">  
 
+### **Book List**
+<img src="./src/main/resources/images/booklistjpg.jpg" alt="Explore Books Using API" width="600">  
+
 ### **Explore Books (API)**
 <img src="./src/main/resources/images/img_2.png" alt="Explore Books Using API" width="600">  
 
 ### **Borrow List**
 <img src="./src/main/resources/images/img_3.png" alt="Borrow List" width="600">  
+
+### **Feedback**
+<img src="./src/main/resources/images/feedback.jpg" alt="Borrow List" width="600">  
+
+### **Feedback List**
+<img src="./src/main/resources/images/feedbacklist.jpg" alt="Borrow List" width="600">  
+
+### **Notification**
+<img src="./src/main/resources/images/noti.jpg" alt="Borrow List" width="600">  
 
 ---
 
