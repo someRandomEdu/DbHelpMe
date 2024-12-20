@@ -33,6 +33,9 @@
 ### **Login Scene**
 <img src="./src/main/resources/images/img.png" alt="Login Scene" width="600">  
 
+### **Sign up Scene**
+<img src="./src/main/resources/images/signup.jpg" alt="Login Scene" width="600">  
+
 ### **Dashboard**
 <img src="./src/main/resources/images/img_1.png" alt="Dashboard" width="600">  
 
