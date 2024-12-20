@@ -17,11 +17,12 @@
    - Go to `File` > `Project Structure` > `Project Settings` > `Project`.  
 5. Open the Maven tool window and run the following tasks:  
    - `clean`  
-   - `install`  
-6. Open `Run/Debug Configuration`:  
+   - `install`
+6. Run Class `OpenLibraryDataImporter` 
+7. Open `Run/Debug Configuration`:  
    - Click **New Application** and choose **JDK23**.  
-   - Set the **Main Class** to `Entry Point`.  
-7. Save the configuration and run `AppStart` to launch the application.
+   - Set the **Main Class** to `EntryPoint`.  
+8. Save the configuration name `AppStart` and run `AppStart` to launch the application.
 
 ---
 
