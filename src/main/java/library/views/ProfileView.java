@@ -50,6 +50,7 @@ public final class ProfileView extends VerticalLayout {
                     account.setPhoneNumber(phoneNumberTextField.getValue());
                     account.setDateOfBirth(dateOfBirthPicker.getValue());
                     accountService.save(account);
+                    CurrentUser.setAccount(account);
                     Helpers.showNotification("Successfully saved changes!", NotificationVariant.LUMO_SUCCESS);
                 }
             }

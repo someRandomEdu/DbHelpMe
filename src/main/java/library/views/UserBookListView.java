@@ -308,13 +308,14 @@ public class UserBookListView extends VerticalLayout {
             DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             String returnDateString = returnDate.format(format);
             String status = "borrowed";
+
             var operationResult = appController.rentBook(Map.ofEntries(
-                    Map.entry("username", getUsername()),
-                    Map.entry("password", getPassword()),
-                    Map.entry("title", titleField.getValue()),
-                    Map.entry("author", authorField.getValue()),
-                    Map.entry("status", status),
-                    Map.entry("returnDate", returnDateString)
+                Map.entry("username", getUsername()),
+                Map.entry("password", getPassword()),
+                Map.entry("title", titleField.getValue()),
+                Map.entry("author", authorField.getValue()),
+                Map.entry("status", status),
+                Map.entry("returnDate", returnDateString)
             ));
 
             var notification = new Notification();
