@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "feedbacks")
 public class Feedback {
+    @Column(name = "title")
     private String title;
+
+    @Column(name = "content")
     private String content;
 
     @Id
@@ -24,7 +27,7 @@ public class Feedback {
         status = "Pending";
     }
 
-    public Feedback(int feedback_id, int user_id, String content, String title) {
+    public Feedback(int feedback_id, int user_id, String title, String content) {
         this.feedback_id = feedback_id;
         this.user_id = user_id;
         this.content = content;
@@ -32,11 +35,11 @@ public class Feedback {
         status = "Pending";
     }
 
-    public Feedback(int feedback_id, int user_id, String content, String title, String status) {
+    public Feedback(int feedback_id, int user_id, String title, String content, String status) {
         this.feedback_id = feedback_id;
         this.user_id = user_id;
-        this.content = content;
         this.title = title;
+        this.content = content;
         this.status = status;
     }
 
@@ -52,12 +55,12 @@ public class Feedback {
         return user_id;
     }
 
-    public String getContent() {
-        return content;
-    }
-
     public String getTitle() {
         return title;
+    }
+
+    public String getContent() {
+        return content;
     }
 
     public String getStatus() {

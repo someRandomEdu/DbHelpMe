@@ -49,6 +49,7 @@ public class ShowReportView extends VerticalLayout {
                 .setFlexGrow(0);
         tableView.addColumn(Feedback::getContent)
                 .setHeader("Feedback Content");
+
         tableView.addColumn(Feedback::getStatus).setHeader("Status");
 
         tableView.getColumns().forEach(column -> column.setClassNameGenerator(item -> "./styles/custom-grid-cell.css"));

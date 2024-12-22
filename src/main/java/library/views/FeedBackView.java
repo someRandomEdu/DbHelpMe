@@ -10,7 +10,9 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.Text;
+import library.FeedbackService;
 import library.entity.CurrentUser;
+import library.entity.Feedback;
 import library.helper.DatabaseHelper;
 
 import java.sql.Connection;
@@ -23,9 +25,10 @@ public class FeedBackView extends VerticalLayout {
     private TextArea contentField;
     private Button sendButton;
     private NativeLabel error;
+    private FeedbackService feedbackService;
 
-    public FeedBackView() {
-
+    public FeedBackView(FeedbackService feedbackService) {
+        this.feedbackService = feedbackService;
         error = new NativeLabel();
         Div titleLabel = new Div(new Text("Send Feedback"));
         titleLabel.addClassName("title-container");
@@ -86,30 +89,43 @@ public class FeedBackView extends VerticalLayout {
     }
 
     private void updateFeedBacktoDatabase() {
-        String query = "insert into feedbacks (user_id, title, content) Values (?,?,?)";
-        DatabaseHelper.connectToDatabase();
-        try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, CurrentUser.getId());
-            stmt.setString(2, titleField.getValue());
-            stmt.setString(3, contentField.getValue());
-
-            int roweffected = stmt.executeUpdate();
-            if (roweffected >= 1) {
-                error.setText("Sent Successfully!");
-                error.getStyle().set("color", "green");
-                titleField.clear();
-                contentField.clear();
-            } else {
-                error.setText("Please try again!");
-                error.getStyle().set("color", "red");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            error.setText("Error occurred while submitting feedback!");
+        try {
+            feedbackService.save(new Feedback(0, CurrentUser.getId(), titleField.getValue(), contentField.getValue()));
+            error.setText("Sent Successfully!");
+            error.getStyle().set("color", "green");
+            titleField.clear();
+            contentField.clear();
+        } catch (Exception e) {
+            error.setText("Error occurred while saving feedback!");
             error.getStyle().set("color", "red");
         }
+
+        // String query = "insert into feedbacks (user_id, title, content) Values (?,?,?)";
+        // DatabaseHelper.connectToDatabase();
+        //
+        // try (Connection conn = DatabaseHelper.getConnection();
+        //      PreparedStatement stmt = conn.prepareStatement(query)) {
+        //     stmt.setInt(1, CurrentUser.getId());
+        //     stmt.setString(2, titleField.getValue());
+        //     stmt.setString(3, contentField.getValue());
+        //
+        //     int roweffected = stmt.executeUpdate();
+        //
+        //     if (roweffected >= 1) {
+        //         error.setText("Sent Successfully!");
+        //         error.getStyle().set("color", "green");
+        //         titleField.clear();
+        //         contentField.clear();
+        //     } else {
+        //         error.setText("Please try again!");
+        //         error.getStyle().set("color", "red");
+        //     }
+        //
+        // } catch (SQLException e) {
+        //     e.printStackTrace();
+        //     error.setText("Error occurred while submitting feedback!");
+        //     error.getStyle().set("color", "red");
+        // }
     }
 
     public static String getRoute() {
