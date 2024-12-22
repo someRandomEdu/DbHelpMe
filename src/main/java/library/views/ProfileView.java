@@ -42,8 +42,6 @@ public final class ProfileView extends VerticalLayout {
 
                 if (!isValidPhoneNumber(phoneNumberTextField.getValue())) {
                     Helpers.showNotification("Invalid phone number!", NotificationVariant.LUMO_ERROR);
-                } else if (accountService.isEmailUsed(emailTextField.getValue())) {
-                    Helpers.showNotification("Email already used!", NotificationVariant.LUMO_ERROR);
                 } else {
                     account.setUsername(usernameTextField.getValue());
                     account.setPassword(passwordTextField.getValue());
